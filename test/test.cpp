@@ -53,9 +53,9 @@ CTEST(logic, changemap)
                {0, 0, 0, 0, 1, 0, 0, 0, 1},
                {0, 0, 0, 0, 0, 1, 0, 1, 0}};
     change_state(field);
-		for(int i = 0; i < 9; i++) {
-			for(int k = 0; k < 9; k++) {
-				ASSERT_EQUAL(res[i][k], field.field[i][k]);
-			}
-		}
+    for (int i = 0; i < 9; i++) {
+        for (int k = 0; k < 9; k++) {
+            ASSERT_EQUAL(res[i][k], field.field[i][k]);
+        }
+    }
 }
