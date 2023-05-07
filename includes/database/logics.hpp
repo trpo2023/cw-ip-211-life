@@ -2,10 +2,11 @@
 
 #include <Field.hpp>
 
-void game_process(Field &field);
+template <typename T1, typename T2>
+int counting_live_cells(Field& field, T1 i, T2 k);
 
-int counting_live_cells(Field &field, int &i, int &k);
+void game_process(Field& field);
 
-void change_state(Field &field);
+void change_state(Field& field);
 
-void print_field(Field &field);
+void print_field(Field& field);
