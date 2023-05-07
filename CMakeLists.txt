@@ -6,7 +6,7 @@ file(GLOB CPPS "src/*.cpp")
 
 add_executable(${PROJECT_NAME} ${CPPS})
 
-target_include_directories(${PROJECT_NAME} PRIVATE includes)
+target_include_directories(${PROJECT_NAME} PRIVATE includes includes/database)
 
 
 
