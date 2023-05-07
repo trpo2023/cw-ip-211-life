@@ -5,74 +5,62 @@
 
 #include <Field.hpp>
 
-void print_field(Field &field)
+void print_field(Field& field)
 {
-    for (int i = 0; i < field.sizeY; i++)
-    {
+    for (int i = 0; i < field.sizeY; i++) {
         std::cout << "|\t";
-        for (int k = 0; k < field.sizeX; k++)
-        {
+        for (int k = 0; k < field.sizeX; k++) {
             std::cout << field.field[i][k] << "\t";
         }
         std::cout << "|\n";
     }
 }
 
-int counting_live_cells(Field &field, int &i, int &k)
+int counting_live_cells(Field& field, int& i, int& k)
 {
     int count = 0;
-    if (i > 0)
-    {
+    if (i > 0) {
         count += field.field[i - 1][k];
     }
-    if (k > 0)
-    {
+    if (k > 0) {
         count += field.field[i][k - 1];
     }
-    if (i < field.sizeX - 1)
-    {
+    if (i < field.sizeX - 1) {
         count += field.field[i + 1][k];
     }
-    if (k < field.sizeY - 1)
-    {
+    if (k < field.sizeY - 1) {
         count += field.field[i][k + 1];
     }
-    if (i > 0 and k > 0)
-    {
+    if (i > 0 and k > 0) {
         count += field.field[i - 1][k - 1];
     }
-    if (i < field.sizeX - 1 and k > 0)
-    {
+    if (i < field.sizeX - 1 and k > 0) {
         count += field.field[i + 1][k - 1];
     }
-    if (i < field.sizeX - 1 and k < field.sizeY - 1)
-    {
+    if (i < field.sizeX - 1 and k < field.sizeY - 1) {
         count += field.field[i + 1][k + 1];
     }
-    if (i > 0 and k < field.sizeY - 1)
-    {
+    if (i > 0 and k < field.sizeY - 1) {
         count += field.field[i - 1][k + 1];
     }
     return count;
 }
 
-void change_state(Field &field)
+void change_state(Field& field)
 {
     std::vector<std::pair<int, int>> changed_cage;
-    for (int i = 0; i < field.sizeX; i++)
-    {
-        for (int k = 0; k < field.sizeY; k++)
-        {
+    for (int i = 0; i < field.sizeX; i++) {
+        for (int k = 0; k < field.sizeY; k++) {
             std::pair<int, int> cur_coord;
-            if (field.field[i][k] and !(counting_live_cells(field, i, k) == 2 or counting_live_cells(field, i, k) == 3))
-            {
+            if (field.field[i][k]
+                and !(counting_live_cells(field, i, k) == 2
+                      or counting_live_cells(field, i, k) == 3)) {
                 cur_coord.first = i;
                 cur_coord.second = k;
                 changed_cage.push_back(cur_coord);
-            }
-            else if (
-                !field.field[i][k] and counting_live_cells(field, i, k) == 3)
-            {
+            } else if (
+                    !field.field[i][k]
+                    and counting_live_cells(field, i, k) == 3) {
                 cur_coord.first = i;
                 cur_coord.second = k;
                 changed_cage.push_back(cur_coord);
@@ -80,25 +68,23 @@ void change_state(Field &field)
         }
     }
 
-    for (int i = 0; i < changed_cage.size(); i++)
-    {
-        field.field[changed_cage[i].first][changed_cage[i].second] = !field.field[changed_cage[i].first][changed_cage[i].second];
+    for (int i = 0; i < changed_cage.size(); i++) {
+        field.field[changed_cage[i].first][changed_cage[i].second]
+                = !field.field[changed_cage[i].first][changed_cage[i].second];
     }
 }
 
-void game_process(Field &field)
+void game_process(Field& field)
 {
     char answer;
     print_field(field);
 
-    do
-    {
+    do {
         std::cout << "next step?(y/n): ";
         std::cin >> answer;
         change_state(field);
         print_field(field);
-        std::cout << '\n'
-                  << answer;
+        std::cout << '\n' << answer;
 
     } while (answer == 'y');
 }

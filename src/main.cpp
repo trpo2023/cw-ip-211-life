@@ -5,11 +5,10 @@
 #include <input.hpp>
 #include <logics.hpp>
 
-
 int main()
 {
-  Field field;
-  get_map_from_user(field);
-  game_process(field);
-  return 0;
+    Field field;
+    get_map_from_user(field);
+    game_process(field);
+    return 0;
 }
