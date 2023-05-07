@@ -5,6 +5,23 @@
 
 #include <Field.hpp>
 
+void game_process(Field &field)
+{
+    char answer;
+    print_field(field);
+
+    do
+    {
+        std::cout << "next step?(y/n): ";
+        std::cin >> answer;
+        change_state(field);
+        print_field(field);
+        std::cout << '\n'
+                  << answer;
+
+    } while (answer == 'y');
+}
+
 int counting_live_cells(Field &field, int &i, int &k)
 {
     int count = 0;
