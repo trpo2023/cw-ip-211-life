@@ -43,7 +43,7 @@ void get_map_from_user(Field &map) {
 }
 
 
-void game_procces(Field& field)
+void game_process(Field& field)
 {
     char answer;
     print_field(field);
@@ -62,6 +62,6 @@ void game_procces(Field& field)
 int main() {
   Field field;
   get_map_from_user(field);
-	game_procces(field);
+	game_process(field);
   return 0;
 }
