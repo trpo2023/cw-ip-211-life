@@ -2,6 +2,7 @@
 #include <string>
 
 #include <Field.hpp>
+#include <logics.hpp>
 
 int get_int(std::string &input, int &i) {
   std::string digit;
@@ -41,8 +42,26 @@ void get_map_from_user(Field &map) {
   }
 }
 
+
+void game_procces(Field& field)
+{
+    char answer;
+    print_field(field);
+
+    do {
+        std::cout << "next step?(y/n): ";
+        std::cin >> answer;
+        change_state(field);
+        print_field(field);
+        std::cout << '\n' << answer;
+
+    } while (answer == 'y');
+}
+
+
 int main() {
   Field field;
   get_map_from_user(field);
+	game_procces(field);
   return 0;
 }
