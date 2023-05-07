@@ -5,18 +5,9 @@
 
 #include <Field.hpp>
 
-void print_field(Field& field)
-{
-    for (int i = 0; i < field.sizeY; i++) {
-        std::cout << "|\t";
-        for (int k = 0; k < field.sizeX; k++) {
-            std::cout << field.field[i][k] << "\t";
-        }
-        std::cout << "|\n";
-    }
-}
+template <typename T1, typename T2>
 
-int counting_live_cells(Field& field, int& i, int& k)
+int counting_live_cells(Field& field, T1 i, T2 k)
 {
     int count = 0;
     if (i > 0) {
@@ -71,6 +62,17 @@ void change_state(Field& field)
     for (int i = 0; i < changed_cage.size(); i++) {
         field.field[changed_cage[i].first][changed_cage[i].second]
                 = !field.field[changed_cage[i].first][changed_cage[i].second];
+    }
+}
+
+void print_field(Field& field)
+{
+    for (int i = 0; i < field.sizeY; i++) {
+        std::cout << "|\t";
+        for (int k = 0; k < field.sizeX; k++) {
+            std::cout << field.field[i][k] << "\t";
+        }
+        std::cout << "|\n";
     }
 }
 
