@@ -5,21 +5,17 @@
 
 #include <Field.hpp>
 
-void game_process(Field &field)
+void print_field(Field &field)
 {
-    char answer;
-    print_field(field);
-
-    do
+    for (int i = 0; i < field.sizeY; i++)
     {
-        std::cout << "next step?(y/n): ";
-        std::cin >> answer;
-        change_state(field);
-        print_field(field);
-        std::cout << '\n'
-                  << answer;
-
-    } while (answer == 'y');
+        std::cout << "|\t";
+        for (int k = 0; k < field.sizeX; k++)
+        {
+            std::cout << field.field[i][k] << "\t";
+        }
+        std::cout << "|\n";
+    }
 }
 
 int counting_live_cells(Field &field, int &i, int &k)
@@ -90,15 +86,19 @@ void change_state(Field &field)
     }
 }
 
-void print_field(Field &field)
+void game_process(Field &field)
 {
-    for (int i = 0; i < field.sizeY; i++)
+    char answer;
+    print_field(field);
+
+    do
     {
-        std::cout << "|\t";
-        for (int k = 0; k < field.sizeX; k++)
-        {
-            std::cout << field.field[i][k] << "\t";
-        }
-        std::cout << "|\n";
-    }
+        std::cout << "next step?(y/n): ";
+        std::cin >> answer;
+        change_state(field);
+        print_field(field);
+        std::cout << '\n'
+                  << answer;
+
+    } while (answer == 'y');
 }
