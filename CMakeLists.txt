@@ -14,5 +14,7 @@ add_executable(test.exe ./test/main.cpp ./src/input.cpp ./src/logics.cpp ./test/
 
 target_include_directories(test.exe PRIVATE thirdparty includes/database includes)
 
-# add_test(NAME test COMMAND test)
+# ****** SFML   ******
 
+find_package(SFML REQUIRED COMPONENTS system window graphics  )
+target_link_libraries(${PROJECT_NAME} sfml-graphics sfml-window sfml-system)
