@@ -79,12 +79,11 @@ void print_field(Game::Field_t& field)
 void game_process(Game::Game_window& game_window)
 {
     char answer;
-    print_field(game_window.field);
+    // print_window(game_window);
 
     do {
         std::cout << "next step?(y/n): ";
         std::cin >> answer;
-        change_state(game_window.field);
         print_field(game_window.field);
         std::cout << '\n' << answer;
 
