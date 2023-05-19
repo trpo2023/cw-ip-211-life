@@ -3,11 +3,11 @@
 #include <string>
 #include <vector>
 
-#include <Field.hpp>
+#include <Game.hpp>
 
 template <typename T1, typename T2>
 
-int counting_live_cells(Field& field, T1 i, T2 k)
+int counting_live_cells(Game::Field_t& field, T1 i, T2 k)
 {
     int count = 0;
     if (i > 0) {
@@ -37,7 +37,7 @@ int counting_live_cells(Field& field, T1 i, T2 k)
     return count;
 }
 
-void change_state(Field& field)
+void change_state(Game::Field_t& field)
 {
     std::vector<std::pair<int, int>> changed_cage;
     for (int i = 0; i < field.sizeX; i++) {
@@ -65,7 +65,7 @@ void change_state(Field& field)
     }
 }
 
-void print_field(Field& field)
+void print_field(Game::Field_t& field)
 {
     for (int i = 0; i < field.sizeY; i++) {
         std::cout << "|\t";
@@ -76,16 +76,16 @@ void print_field(Field& field)
     }
 }
 
-void game_process(Field& field)
+void game_process(Game::Game_window& game_window)
 {
     char answer;
-    print_field(field);
+    print_field(game_window.field);
 
     do {
         std::cout << "next step?(y/n): ";
         std::cin >> answer;
-        change_state(field);
-        print_field(field);
+        change_state(game_window.field);
+        print_field(game_window.field);
         std::cout << '\n' << answer;
 
     } while (answer == 'y');
