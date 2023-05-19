@@ -32,7 +32,7 @@ void get_map_from_user(Game::Game_window& game_window)
 {
     game_window.field.sizeX = 50;
     game_window.field.sizeY = 50;
-		game_window.calculate_cell_size();
+    game_window.calculate_cell_size();
     allocate_memory_for_field(game_window.field);
     std::cout << "Введите живую клетку в формате: X,Y\nЧтобы закончить ввод "
                  "введите '-1'\n";
