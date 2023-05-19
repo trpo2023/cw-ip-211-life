@@ -15,10 +15,9 @@ int main()
 
     get_map_from_user(game_window);
     game_window.display();
+    window.setKeyRepeatEnabled(false);
 
     while (window.isOpen()) {
-        window.setKeyRepeatEnabled(false);
-
         sf::Event event;
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed)
@@ -30,10 +29,6 @@ int main()
                 }
             }
         }
-
-        // if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return)) {
-
-        // }
     }
     return 0;
 }
