@@ -1,10 +1,10 @@
 #include <ctest.h>
 
-#include <Field.hpp>
+#include <Game.hpp>
 #include <input.hpp>
 #include <logics.hpp>
 
-Field field = {9, 9};
+Game::Field_t field = {9, 9};
 
 void create_field()
 {

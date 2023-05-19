@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-#include <Field.hpp>
+#include <Game.hpp>
 
 int get_int(std::string& input, int& i)
 {
@@ -17,22 +17,25 @@ int get_int(std::string& input, int& i)
     return stod(digit);
 }
 
-void allocate_memory_for_field(Field& map)
+void allocate_memory_for_field(Game::Field_t& map)
 {
     map.field = new bool*[map.sizeY];
-    for (int i = 0; i < map.sizeY; i++)
+    for (int i = 0; i < map.sizeY; i++) {
         map.field[i] = new bool[map.sizeX];
+        for (int k = 0; k < map.sizeX; k++) {
+            map.field[i][k] = 0;
+        }
+    }
 }
 
-void get_map_from_user(Field& map)
+void get_map_from_user(Game::Game_window& game_window)
 {
-    map.sizeX = 9;
-    map.sizeY = 9;
-    allocate_memory_for_field(map);
+    game_window.field.sizeX = 9;
+    game_window.field.sizeY = 9;
+    allocate_memory_for_field(game_window.field);
     std::cout << "Введите живую клетку в формате: X,Y\nЧтобы закончить ввод "
                  "введите '-1'\n";
     std::string input;
-
     while (true) {
         std::pair<int, int> coords;
         getline(std::cin, input);
@@ -41,7 +44,7 @@ void get_map_from_user(Field& map)
         if (coords.first == -2)
             break;
         coords.second = get_int(input, i) - 1;
-        map.field[coords.second][coords.first]
-                = !map.field[coords.second][coords.first];
+        game_window.field.field[coords.second][coords.first]
+                = !game_window.field.field[coords.second][coords.first];
     }
 }
