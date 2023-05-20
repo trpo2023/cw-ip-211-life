@@ -37,14 +37,13 @@ int Game::Logic::counting_live_cells(Game::Field_t& field, T1 i, T2 k)
     return count;
 }
 
-std::vector<std::pair<int, int>>
-Game::Logic::change_state(Game::Field_t& field)
+std::vector<std::pair<int, int>> Game::Logic::change_state(Game::Field_t& field)
 {
     std::vector<std::pair<int, int>> changed_cage;
     for (int i = 0; i < field.sizeX; i++) {
         if (i < field.sizeX - 2) {
-            int tmp_sum = ((i >= 1) ? config->live_cell_sum[i - 1] : 0)
-                    + config->live_cell_sum[i] + config->live_cell_sum[i + 1];
+            int tmp_sum = ((i >= 1) ? config->live_cell_sum[i - 1] : 0) + config->live_cell_sum[i]
+                    + config->live_cell_sum[i + 1];
             if (tmp_sum == 0) {
                 continue;
             }
@@ -57,9 +56,7 @@ Game::Logic::change_state(Game::Field_t& field)
                 cur_coord.first = i;
                 cur_coord.second = k;
                 changed_cage.push_back(cur_coord);
-            } else if (
-                    !field.field[i][k]
-                    and counting_live_cells(field, i, k) == 3) {
+            } else if (!field.field[i][k] and counting_live_cells(field, i, k) == 3) {
                 cur_coord.first = i;
                 cur_coord.second = k;
                 changed_cage.push_back(cur_coord);
