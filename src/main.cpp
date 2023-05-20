@@ -3,8 +3,6 @@
 #include <string>
 
 #include <Game.hpp>
-#include <input.hpp>
-#include <logics.hpp>
 
 int main()
 {
@@ -13,7 +11,8 @@ int main()
     sf::RenderWindow window(sf::VideoMode(windowX, windowY), "SFML works!");
     Game::Game_window game_window{window, windowX, windowY};
 
-    get_map_from_user(game_window);
+    game_window.get_map_from_user(game_window);
+
     game_window.display();
     window.setKeyRepeatEnabled(false);
 
@@ -24,8 +23,8 @@ int main()
                 window.close();
             if (event.type == sf::Event::KeyPressed) {
                 if (event.key.code == sf::Keyboard::Return) {
-                    change_state(game_window.field);
-                    game_window.display();
+                    game_window.display(
+                            game_window.change_state(game_window.field));
                 }
             }
         }

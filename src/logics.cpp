@@ -7,7 +7,7 @@
 
 template <typename T1, typename T2>
 
-int counting_live_cells(Game::Field_t& field, T1 i, T2 k)
+int Game::Game_window::counting_live_cells(Game::Field_t& field, T1 i, T2 k)
 {
     int count = 0;
     if (i > 0) {
@@ -37,10 +37,18 @@ int counting_live_cells(Game::Field_t& field, T1 i, T2 k)
     return count;
 }
 
-void change_state(Game::Field_t& field)
+std::vector<std::pair<int, int>>
+Game::Game_window::change_state(Game::Field_t& field)
 {
     std::vector<std::pair<int, int>> changed_cage;
     for (int i = 0; i < field.sizeX; i++) {
+        if (i < field.sizeX - 2) {
+            int tmp_sum = ((i >= 1) ? live_cell_sum[i - 1] : 0)
+                    + live_cell_sum[i] + live_cell_sum[i + 1];
+            if (tmp_sum == 0) {
+                continue;
+            }
+        }
         for (int k = 0; k < field.sizeY; k++) {
             std::pair<int, int> cur_coord;
             if (field.field[i][k]
@@ -62,30 +70,11 @@ void change_state(Game::Field_t& field)
     for (int i = 0; i < changed_cage.size(); i++) {
         field.field[changed_cage[i].first][changed_cage[i].second]
                 = !field.field[changed_cage[i].first][changed_cage[i].second];
-    }
-}
-
-void print_field(Game::Field_t& field)
-{
-    for (int i = 0; i < field.sizeY; i++) {
-        std::cout << "|\t";
-        for (int k = 0; k < field.sizeX; k++) {
-            std::cout << field.field[i][k] << "\t";
+        if (field.field[changed_cage[i].first][changed_cage[i].second]) {
+            live_cell_sum[changed_cage[i].first]++;
+        } else {
+            live_cell_sum[changed_cage[i].first]--;
         }
-        std::cout << "|\n";
     }
-}
-
-void game_process(Game::Game_window& game_window)
-{
-    char answer;
-    // print_window(game_window);
-
-    do {
-        std::cout << "next step?(y/n): ";
-        std::cin >> answer;
-        print_field(game_window.field);
-        std::cout << '\n' << answer;
-
-    } while (answer == 'y');
+    return changed_cage;
 }
