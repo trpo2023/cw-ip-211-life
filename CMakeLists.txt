@@ -10,9 +10,9 @@ target_include_directories(${PROJECT_NAME} PRIVATE includes includes/database)
 
 # ****** CTESTS ******
 
-# add_executable(test.exe ./test/main.cpp ./src/input.cpp ./src/logics.cpp ./test/test.cpp)
+add_executable(test.exe ./test/main.cpp ./src/input.cpp ./src/logics.cpp ./test/test.cpp)
 
-# target_include_directories(test.exe PRIVATE thirdparty includes/database includes)
+target_include_directories(test.exe PRIVATE thirdparty includes/database includes)
 
 # ****** SFML   ******
 

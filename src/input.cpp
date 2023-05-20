@@ -30,10 +30,10 @@ void Game::Input::allocate_memory_for_field(Game::Field_t& map)
 
 void Game::Input::get_map_from_user(Game::Game_window& game_window)
 {
-    game_window.field.sizeX = 50;
-    game_window.field.sizeY = 50;
+    game_window.get_config()->field.sizeX = 50;
+    game_window.get_config()->field.sizeY = 50;
     game_window.calculate_cell_size();
-    allocate_memory_for_field(game_window.field);
+    allocate_memory_for_field(game_window.get_config()->field);
     std::cout << "Введите живую клетку в формате: X,Y\nЧтобы закончить ввод "
                  "введите '-1'\n";
     std::string input;
@@ -45,9 +45,12 @@ void Game::Input::get_map_from_user(Game::Game_window& game_window)
         if (coords.first == -2)
             break;
         coords.second = get_int(input, i) - 1;
-        game_window.field.field[coords.second][coords.first]
-                = !game_window.field.field[coords.second][coords.first];
-        if (game_window.field.field[coords.second][coords.first]) {
+        game_window.get_config()->field.field[coords.second][coords.first]
+                = !game_window.get_config()->field.field[coords.second][coords.first];
+        if (game_window.get_config()->field.field[coords.second][coords.first]) {
+            game_window.get_config()->live_cell_sum[coords.second]++;
+        } else {
+            game_window.get_config()->live_cell_sum[coords.second]--;
         }
     }
 }

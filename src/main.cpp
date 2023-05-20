@@ -24,7 +24,7 @@ int main()
             if (event.type == sf::Event::KeyPressed) {
                 if (event.key.code == sf::Keyboard::Return) {
                     game_window.display(
-                            game_window.logic_p->change_state(game_window.field));
+                            game_window.logic_p->change_state(game_window.get_config()->field));
                 }
             }
         }
