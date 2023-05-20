@@ -28,29 +28,122 @@ void Game::Input::allocate_memory_for_field(Game::Field_t& map)
     }
 }
 
+void Game::Game_window::setInputMode()
+{
+    config->input_mode = true;
+    config->game_mode = false;
+}
+
 void Game::Input::get_map_from_user(Game::Game_window& game_window)
 {
     game_window.get_config()->field.sizeX = 50;
     game_window.get_config()->field.sizeY = 50;
     game_window.calculate_cell_size();
     allocate_memory_for_field(game_window.get_config()->field);
-    std::cout << "Введите живую клетку в формате: X,Y\nЧтобы закончить ввод "
-                 "введите '-1'\n";
-    std::string input;
-    while (true) {
-        std::pair<int, int> coords;
-        getline(std::cin, input);
-        int i = 0;
-        coords.first = get_int(input, i) - 1;
-        if (coords.first == -2)
-            break;
-        coords.second = get_int(input, i) - 1;
-        game_window.get_config()->field.field[coords.second][coords.first]
-                = !game_window.get_config()->field.field[coords.second][coords.first];
-        if (game_window.get_config()->field.field[coords.second][coords.first]) {
-            game_window.get_config()->live_cell_sum[coords.second]++;
-        } else {
-            game_window.get_config()->live_cell_sum[coords.second]--;
+    game_window.setInputMode();
+    game_window.display();
+    while (config->window_p->isOpen()) {
+        sf::Event event;
+        while (config->window_p->pollEvent(event)) {
+            if (event.type == sf::Event::Closed)
+                config->window_p->close();
+            if (event.type == sf::Event::KeyPressed) {
+                if (process_the_key(event)) {
+                    return;
+                };
+            }
+            if (event.type == sf::Event::Resized) {
+                sf::FloatRect visiableArea(0, 0, event.size.width, event.size.height);
+                config->window_p->setView(sf::View(visiableArea));
+                game_window.resized(event.size.width, event.size.height);
+                config->window_p->clear();
+                game_window.display();
+            }
         }
+        config->window_p->display();
     }
 }
+
+void Game::Input::user_choise()
+{
+    sf::RectangleShape cell(sf::Vector2f(config->size_cell, config->size_cell));
+    cell.setPosition(sf::Vector2f(
+            posX * config->size_cell + config->offsetX,
+            posY * config->size_cell + config->offsetY));
+    cell.setFillColor(sf::Color::Magenta);
+    cell.setOutlineThickness(1);
+    cell.setOutlineColor(sf::Color::White);
+    config->window_p->draw(cell);
+}
+
+int Game::Input::input_keyboard(sf::Event& event)
+{
+    std::pair<int, int> change_cage;
+    switch (event.key.code) {
+    case sf::Keyboard::W:
+    case sf::Keyboard::Up:
+        print_squard(config->field.field[posY][posX], posY, posX, config->offsetX, config->offsetY);
+        posY = (config->field.sizeY + ((posY - 1) % config->field.sizeY)) % config->field.sizeY;
+        user_choise();
+
+        break;
+    case sf::Keyboard::A:
+    case sf::Keyboard::Left:
+
+        print_squard(config->field.field[posY][posX], posY, posX, config->offsetX, config->offsetY);
+
+        posX = (config->field.sizeX + ((posX - 1) % config->field.sizeX)) % config->field.sizeX;
+        user_choise();
+        break;
+    case sf::Keyboard::S:
+    case sf::Keyboard::Down:
+
+        print_squard(config->field.field[posY][posX], posY, posX, config->offsetX, config->offsetY);
+
+        posY = (config->field.sizeY + ((posY + 1) % config->field.sizeY)) % config->field.sizeY;
+
+        user_choise();
+        break;
+    case sf::Keyboard::D:
+    case sf::Keyboard::Right:
+
+        print_squard(config->field.field[posY][posX], posY, posX, config->offsetX, config->offsetY);
+        posX = (config->field.sizeX + ((posX + 1) % config->field.sizeX)) % config->field.sizeX;
+        user_choise();
+
+        break;
+    case sf::Keyboard::Enter:
+        config->field.field[posY][posX] = !config->field.field[posY][posX];
+        if (config->field.field[posY][posX]) {
+            config->live_cell_sum[posY]++;
+        } else {
+            config->live_cell_sum[posY]--;
+        }
+        break;
+        print_squard(1, posY, posX, config->offsetX, config->offsetY);
+    case sf::Keyboard::Space:
+        return 1;
+    default:
+        break;
+    }
+    return 0;
+}
+
+int Game::Input::process_the_key(sf::Event& event)
+{
+    if (config->input_mode) {
+        if (input_keyboard(event)) {
+            return 1;
+        };
+    } else if (config->game_mode) {
+    }
+    return 0;
+}
+
+// bool Game::Input::define_the_key(sf::Event& event)
+// {
+//     for (int i = 0; i < key_count; i++)
+//         if (event.key.code == keyboard[i])
+//             return true;
+//     return false;
+// }

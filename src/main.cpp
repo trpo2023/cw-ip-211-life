@@ -6,8 +6,8 @@
 
 int main()
 {
-    const int windowX = 454;
-    const int windowY = 622;
+    const int windowX = 1000;
+    const int windowY = 1000;
     sf::RenderWindow window(sf::VideoMode(windowX, windowY), "SFML works!");
     Game::Game_window game_window{window, windowX, windowY};
 
@@ -23,8 +23,10 @@ int main()
                 window.close();
             if (event.type == sf::Event::KeyPressed) {
                 if (event.key.code == sf::Keyboard::Return) {
-                    game_window.display(
+                    game_window.input_p->display(
                             game_window.logic_p->change_state(game_window.get_config()->field));
+                } else {
+                    game_window.input_p->process_the_key(event);
                 }
             }
             if (event.type == sf::Event::Resized) {
