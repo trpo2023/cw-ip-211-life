@@ -83,7 +83,8 @@ public:
                 / get_config()->field.sizeX;
         float Y = (config->windowY - config->windowY * config->margin * 2.)
                 / get_config()->field.sizeY;
-        std::cout << "X = " << X << "\nY = " << Y << " windowY = " << config->windowY << " windowX = " << config->windowX <<  '\n';
+        std::cout << "X = " << X << "\nY = " << Y << " windowY = " << config->windowY
+                  << " windowX = " << config->windowX << '\n';
         config->size_cell = (X < Y) ? X : Y;
     }
 
@@ -95,7 +96,7 @@ public:
     void print_squard(bool is_live, int coordY, int coordX, float offsetX, float offsetY)
     {
         sf::RectangleShape cell(sf::Vector2f(config->size_cell, config->size_cell));
-				// cell.setScale(sf::Vector2f(0, 0));
+        // cell.setScale(sf::Vector2f(0, 0));
         cell.setPosition(sf::Vector2f(
                 coordX * config->size_cell + offsetX, coordY * config->size_cell + offsetY));
         cell.setFillColor((is_live) ? sf::Color::White : sf::Color::Black);
@@ -118,7 +119,8 @@ public:
     }
     void display()
     {
-				std::cout << config->window_p->getPosition().x << ' ' << config->window_p->getPosition().x << '\n';
+        std::cout << config->window_p->getPosition().x << ' ' << config->window_p->getPosition().x
+                  << '\n';
         for (int i = 0; i < get_config()->field.sizeY; i++) {
             for (int k = 0; k < get_config()->field.sizeX; k++) {
                 print_squard(

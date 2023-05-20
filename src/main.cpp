@@ -27,15 +27,15 @@ int main()
                             game_window.logic_p->change_state(game_window.get_config()->field));
                 }
             }
-						if (event.type == sf::Event::Resized) {
-							sf::FloatRect visiableArea(0, 0, event.size.width, event.size.height);
-							window.setView(sf::View(visiableArea));
-							game_window.resized(event.size.width, event.size.height);
-							window.clear();
-							game_window.display();
-						}
+            if (event.type == sf::Event::Resized) {
+                sf::FloatRect visiableArea(0, 0, event.size.width, event.size.height);
+                window.setView(sf::View(visiableArea));
+                game_window.resized(event.size.width, event.size.height);
+                window.clear();
+                game_window.display();
+            }
         }
-				window.display();
+        window.display();
     }
     return 0;
 }
