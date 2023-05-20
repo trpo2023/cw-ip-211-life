@@ -72,8 +72,12 @@ public:
 
     void calculate_cell_size()
     {
-        config->size_cell = (config->windowX - config->windowX * config->margin * 2.)
+        float X = (config->windowX - config->windowX * config->margin * 2.)
                 / get_config()->field.sizeX;
+        float Y = (config->windowY - config->windowY * config->margin * 2.)
+                / get_config()->field.sizeY;
+        std::cout << "X = " << X << "\nY = " << Y << "windowY = " << config->windowY << '\n';
+        config->size_cell = (X < Y) ? X : Y;
     }
 
     window_config*& get_config()
@@ -81,11 +85,11 @@ public:
         return config;
     }
 
-    void print_squard(bool is_live, int coordX, int coordY, int offset)
+    void print_squard(bool is_live, int coordY, int coordX, int offsetX, int offsetY)
     {
         sf::RectangleShape cell(sf::Vector2f(config->size_cell, config->size_cell));
         cell.setPosition(sf::Vector2f(
-                coordX * config->size_cell + offset, coordY * config->size_cell + offset));
+                coordX * config->size_cell + offsetX, coordY * config->size_cell + offsetY));
         cell.setFillColor((is_live) ? sf::Color::White : sf::Color::Black);
         cell.setOutlineThickness(1);
         cell.setOutlineColor(sf::Color::White);
@@ -99,19 +103,21 @@ public:
                     get_config()->field.field[mas[i].first][mas[i].second],
                     mas[i].first,
                     mas[i].second,
-                    (config->windowX - get_config()->field.sizeX * config->size_cell) / 2);
+                    (config->windowX - get_config()->field.sizeX * config->size_cell) / 2,
+                    (config->windowY - get_config()->field.sizeY * config->size_cell) / 2);
         }
         config->window_p->display();
     }
     void display()
     {
-        for (int i = 0; i < get_config()->field.sizeX; i++) {
-            for (int k = 0; k < get_config()->field.sizeY; k++) {
+        for (int i = 0; i < get_config()->field.sizeY; i++) {
+            for (int k = 0; k < get_config()->field.sizeX; k++) {
                 print_squard(
                         get_config()->field.field[i][k],
                         i,
                         k,
-                        (config->windowX - get_config()->field.sizeX * config->size_cell) / 2);
+                        (config->windowX - get_config()->field.sizeX * config->size_cell) / 2,
+                        (config->windowY - get_config()->field.sizeY * config->size_cell) / 2);
             }
         }
         config->window_p->display();

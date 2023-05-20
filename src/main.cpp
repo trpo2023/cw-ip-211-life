@@ -6,8 +6,8 @@
 
 int main()
 {
-    const int windowX = 1000;
-    const int windowY = 1000;
+    const int windowX = 100;
+    const int windowY = 131;
     sf::RenderWindow window(sf::VideoMode(windowX, windowY), "SFML works!");
     Game::Game_window game_window{window, windowX, windowY};
 
