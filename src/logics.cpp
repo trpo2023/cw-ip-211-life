@@ -7,7 +7,7 @@
 
 template <typename T1, typename T2>
 
-int Game::Game_window::counting_live_cells(Game::Field_t& field, T1 i, T2 k)
+int Game::Logic::counting_live_cells(Game::Field_t& field, T1 i, T2 k)
 {
     int count = 0;
     if (i > 0) {
@@ -38,13 +38,13 @@ int Game::Game_window::counting_live_cells(Game::Field_t& field, T1 i, T2 k)
 }
 
 std::vector<std::pair<int, int>>
-Game::Game_window::change_state(Game::Field_t& field)
+Game::Logic::change_state(Game::Field_t& field)
 {
     std::vector<std::pair<int, int>> changed_cage;
     for (int i = 0; i < field.sizeX; i++) {
         if (i < field.sizeX - 2) {
-            int tmp_sum = ((i >= 1) ? live_cell_sum[i - 1] : 0)
-                    + live_cell_sum[i] + live_cell_sum[i + 1];
+            int tmp_sum = ((i >= 1) ? config->live_cell_sum[i - 1] : 0)
+                    + config->live_cell_sum[i] + config->live_cell_sum[i + 1];
             if (tmp_sum == 0) {
                 continue;
             }
@@ -71,9 +71,9 @@ Game::Game_window::change_state(Game::Field_t& field)
         field.field[changed_cage[i].first][changed_cage[i].second]
                 = !field.field[changed_cage[i].first][changed_cage[i].second];
         if (field.field[changed_cage[i].first][changed_cage[i].second]) {
-            live_cell_sum[changed_cage[i].first]++;
+            config->live_cell_sum[changed_cage[i].first]++;
         } else {
-            live_cell_sum[changed_cage[i].first]--;
+            config->live_cell_sum[changed_cage[i].first]--;
         }
     }
     return changed_cage;

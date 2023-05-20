@@ -11,7 +11,7 @@ int main()
     sf::RenderWindow window(sf::VideoMode(windowX, windowY), "SFML works!");
     Game::Game_window game_window{window, windowX, windowY};
 
-    game_window.get_map_from_user(game_window);
+    game_window.input_p->get_map_from_user(game_window);
 
     game_window.display();
     window.setKeyRepeatEnabled(false);
@@ -24,7 +24,7 @@ int main()
             if (event.type == sf::Event::KeyPressed) {
                 if (event.key.code == sf::Keyboard::Return) {
                     game_window.display(
-                            game_window.change_state(game_window.field));
+                            game_window.logic_p->change_state(game_window.field));
                 }
             }
         }

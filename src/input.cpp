@@ -5,7 +5,7 @@
 
 #include <Game.hpp>
 
-int Game::Game_window::get_int(std::string& input, int& i)
+int Game::Input::get_int(std::string& input, int& i)
 {
     std::string digit;
     for (; i < input.size() && input[i] != ','; i++) {
@@ -17,7 +17,7 @@ int Game::Game_window::get_int(std::string& input, int& i)
     return stod(digit);
 }
 
-void Game::Game_window::allocate_memory_for_field(Game::Field_t& map)
+void Game::Input::allocate_memory_for_field(Game::Field_t& map)
 {
     map.field = new bool*[map.sizeY];
     for (int i = 0; i < map.sizeY; i++) {
@@ -28,7 +28,7 @@ void Game::Game_window::allocate_memory_for_field(Game::Field_t& map)
     }
 }
 
-void Game::Game_window::get_map_from_user(Game::Game_window& game_window)
+void Game::Input::get_map_from_user(Game::Game_window& game_window)
 {
     game_window.field.sizeX = 50;
     game_window.field.sizeY = 50;
