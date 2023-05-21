@@ -64,8 +64,8 @@ void Game::Input::process_mouse_click()
 
 void Game::Input::get_map_from_user(Game::Game_window& game_window)
 {
-    game_window.get_config()->field.sizeX = 50;
-    game_window.get_config()->field.sizeY = 50;
+    game_window.get_config()->field.sizeX = 100;
+    game_window.get_config()->field.sizeY = 87;
     game_window.calculate_cell_size();
     allocate_memory_for_field(game_window.get_config()->field);
     game_window.setInputMode();

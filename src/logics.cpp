@@ -15,22 +15,22 @@ int Game::Logic::counting_live_cells(Game::Field_t& field, T1 i, T2 k)
     if (k > 0) {
         count += field.field[i][k - 1];
     }
-    if (i < field.sizeX - 1) {
+    if (i < field.sizeY - 1) {
         count += field.field[i + 1][k];
     }
-    if (k < field.sizeY - 1) {
+    if (k < field.sizeX - 1) {
         count += field.field[i][k + 1];
     }
     if (i > 0 and k > 0) {
         count += field.field[i - 1][k - 1];
     }
-    if (i < field.sizeX - 1 and k > 0) {
+    if (i < field.sizeY - 1 and k > 0) {
         count += field.field[i + 1][k - 1];
     }
-    if (i < field.sizeX - 1 and k < field.sizeY - 1) {
+    if (i < field.sizeY - 1 and k < field.sizeX - 1) {
         count += field.field[i + 1][k + 1];
     }
-    if (i > 0 and k < field.sizeY - 1) {
+    if (i > 0 and k < field.sizeX - 1) {
         count += field.field[i - 1][k + 1];
     }
     return count;
