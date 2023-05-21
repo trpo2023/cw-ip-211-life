@@ -14,11 +14,12 @@ int main()
 
     while (window.isOpen()) {
         sf::Event event;
-        while (window.pollEvent(event)) {
+        do {
             if (event.type == sf::Event::Closed)
                 window.close();
             game_window.game(event);
-        }
+        } while (window.pollEvent(event));
+
         window.display();
     }
     return 0;

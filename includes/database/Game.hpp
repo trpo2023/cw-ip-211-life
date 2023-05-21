@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <string>
+#include <chrono>
 #ifndef MAP_HPP
 #define MAP_HPP
 
@@ -25,6 +26,9 @@ public:
     bool is_resized = false;
     float offsetX;
     float offsetY;
+		bool auto_change = false;
+		int delay_between_changed_generations = 1000;
+		int64_t cur_time;
 };
 
 class Logic {
