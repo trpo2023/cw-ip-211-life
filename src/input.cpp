@@ -84,6 +84,18 @@ void Game::Input::user_choise()
     config->window_p->draw(cell);
 }
 
+void Game::Input::clear()
+{
+	for(int i = 0; i < config->field.sizeY; i++) {
+		config->live_cell_sum[i] = 0;
+		for(int k = 0; k < config->field.sizeX; k++) {
+			config->field.field[i][k] = false;
+		}
+	}
+	display();
+
+}
+
 int Game::Input::input_keyboard(sf::Event& event)
 {
     std::pair<int, int> change_cage;
@@ -123,7 +135,6 @@ int Game::Input::input_keyboard(sf::Event& event)
             config->live_cell_sum[posY]--;
         }
         break;
-        print_squard(true, posY, posX);
     case sf::Keyboard::Space:
         display();
         return 1;
@@ -135,6 +146,17 @@ int Game::Input::input_keyboard(sf::Event& event)
 
 void Game::Game_window::game(sf::Event& event)
 {
+    if (event.type == sf::Event::KeyPressed) {
+			switch (event.key.code)
+			{
+			case sf::Keyboard::K:
+				input_p->clear();
+				break;
+			
+			default:
+				break;
+			}
+    }
     if (config->game_mode and !config->input_mode) {
         if (event.type == sf::Event::KeyPressed) {
             if (event.key.code == sf::Keyboard::O) {

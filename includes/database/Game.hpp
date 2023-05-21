@@ -41,6 +41,8 @@ public:
 
 class Input {
 public:
+    void clear();
+
     Input(window_config*& config_gl)
     {
         config = config_gl;
