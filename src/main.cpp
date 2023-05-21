@@ -11,7 +11,6 @@ int main()
     Game::Game_window game_window{window, windowX, windowY};
 
     window.setKeyRepeatEnabled(false);
-    game_window.display();
 
     while (window.isOpen()) {
         sf::Event event;

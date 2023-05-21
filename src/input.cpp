@@ -137,7 +137,7 @@ void Game::Game_window::game(sf::Event& event)
 {
     if (config->game_mode and !config->input_mode) {
         if (event.type == sf::Event::KeyPressed) {
-            if (event.key.code == sf::Keyboard::Return) {
+            if (event.key.code == sf::Keyboard::O) {
                 input_p->display(logic_p->change_state(config->field));
             }
         }
