@@ -70,6 +70,9 @@ void Game::Input::get_map_from_user(Game::Game_window& game_window)
     allocate_memory_for_field(game_window.get_config()->field);
     game_window.setInputMode();
     game_window.display();
+
+    bool resized = false;
+
     while (config->window_p->isOpen()) {
         sf::Event event;
         while (config->window_p->pollEvent(event)) {
@@ -80,17 +83,27 @@ void Game::Input::get_map_from_user(Game::Game_window& game_window)
                     return;
                 };
             }
-            if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+            if (!resized and sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
                 process_mouse_click();
             }
+            int width, height;
             if (event.type == sf::Event::Resized) {
-                sf::FloatRect visiableArea(0, 0, event.size.width, event.size.height);
-                config->window_p->setView(sf::View(visiableArea));
-                game_window.resized(event.size.width, event.size.height);
+                resized = true;
+                height = event.size.height;
+                width = event.size.width;
+                config->window_p->clear();
+
+            } else if (resized) {
+                resized = false;
+                std::cout << "start\n";
+                game_window.resized(width, height);
+
                 config->window_p->clear();
                 game_window.display();
+                std::cout << "finish\n";
             }
         }
+
         config->window_p->display();
     }
 }

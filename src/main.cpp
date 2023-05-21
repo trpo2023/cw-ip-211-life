@@ -15,7 +15,7 @@ int main()
 
     game_window.display();
     window.setKeyRepeatEnabled(false);
-
+    bool resized = false;
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
@@ -29,12 +29,22 @@ int main()
                     game_window.input_p->process_the_key(event);
                 }
             }
+            int width, height;
             if (event.type == sf::Event::Resized) {
-                sf::FloatRect visiableArea(0, 0, event.size.width, event.size.height);
-                window.setView(sf::View(visiableArea));
-                game_window.resized(event.size.width, event.size.height);
+                resized = true;
+                height = event.size.height;
+                width = event.size.width;
+                window.clear();
+                window.hasFocus();
+
+            } else if (resized) {
+                resized = false;
+                std::cout << "start\n";
+                game_window.resized(width, height);
+
                 window.clear();
                 game_window.display();
+                std::cout << "finish\n";
             }
         }
         window.display();

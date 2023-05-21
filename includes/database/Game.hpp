@@ -114,10 +114,13 @@ public:
         config->offsetX = (config->windowX - get_config()->field.sizeX * config->size_cell) / 2.;
         config->offsetY = (config->windowY - get_config()->field.sizeY * config->size_cell) / 2.;
     }
-    void resized(unsigned int newX, unsigned int newY)
+    void resized(int width, int height)
     {
-        config->windowX = newX;
-        config->windowY = newY;
+				std::cout << "new size: " <<  height << ' ' << width << '\n';
+        sf::FloatRect visiableArea(0, 0, width, height);
+        config->window_p->setView(sf::View(visiableArea));
+        config->windowX = width;
+        config->windowY = height;
         calculate_cell_size();
         calc_offsets();
     }
