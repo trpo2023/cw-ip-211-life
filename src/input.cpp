@@ -62,44 +62,30 @@ void Game::Input::process_mouse_click()
     print_squard(config->field.field[cellY][cellX], cellY, cellX, config->offsetX, config->offsetY);
 }
 
-void Game::Input::get_map_from_user(Game::Game_window& game_window)
+void Game::Input::get_map_from_user()
 {
-    game_window.get_config()->field.sizeX = 100;
-    game_window.get_config()->field.sizeY = 87;
-    game_window.calculate_cell_size();
-    allocate_memory_for_field(game_window.get_config()->field);
-    game_window.setInputMode();
-    game_window.display();
-
-    bool resized = false;
+    bool is_resized = false;
 
     while (config->window_p->isOpen()) {
         sf::Event event;
         while (config->window_p->pollEvent(event)) {
             if (event.type == sf::Event::Closed)
                 config->window_p->close();
-            if (event.type == sf::Event::KeyPressed) {
-                if (process_the_key(event)) {
-                    return;
-                };
-            }
-            if (!resized and sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-                process_mouse_click();
-            }
+
             int width, height;
             if (event.type == sf::Event::Resized) {
-                resized = true;
+                is_resized = true;
                 height = event.size.height;
                 width = event.size.width;
                 config->window_p->clear();
 
-            } else if (resized) {
-                resized = false;
+            } else if (is_resized) {
+                is_resized = false;
                 std::cout << "start\n";
-                game_window.resized(width, height);
+                resized(width, height);
 
                 config->window_p->clear();
-                game_window.display();
+                display();
                 std::cout << "finish\n";
             }
         }
@@ -141,20 +127,15 @@ int Game::Input::input_keyboard(sf::Event& event)
         break;
     case sf::Keyboard::S:
     case sf::Keyboard::Down:
-
         print_squard(config->field.field[posY][posX], posY, posX, config->offsetX, config->offsetY);
-
         posY = (config->field.sizeY + ((posY + 1) % config->field.sizeY)) % config->field.sizeY;
-
         user_choise();
         break;
     case sf::Keyboard::D:
     case sf::Keyboard::Right:
-
         print_squard(config->field.field[posY][posX], posY, posX, config->offsetX, config->offsetY);
         posX = (config->field.sizeX + ((posX + 1) % config->field.sizeX)) % config->field.sizeX;
         user_choise();
-
         break;
     case sf::Keyboard::Enter:
         config->field.field[posY][posX] = !config->field.field[posY][posX];
@@ -166,7 +147,8 @@ int Game::Input::input_keyboard(sf::Event& event)
         break;
         print_squard(1, posY, posX, config->offsetX, config->offsetY);
     case sf::Keyboard::Space:
-        return 1;
+				display();
+				return 1;
     default:
         break;
     }
