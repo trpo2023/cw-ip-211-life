@@ -77,8 +77,11 @@ public:
     int process_the_key(sf::Event&);
     int input_keyboard(sf::Event&);
     void user_choise();
+    void process_mouse_click();
 
 private:
+    int last_clickX = -1;
+    int last_clickY = -1;
     static const int key_count = 20;
     sf::Keyboard::Key keyboard[key_count]
             = {sf::Keyboard::W, sf::Keyboard::S, sf::Keyboard::A, sf::Keyboard::D};

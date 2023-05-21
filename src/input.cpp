@@ -34,6 +34,34 @@ void Game::Game_window::setInputMode()
     config->game_mode = false;
 }
 
+void Game::Input::process_mouse_click()
+{
+    sf::Vector2i mouse_pos = sf::Mouse::getPosition(*config->window_p);
+    // std::cout << mouse_pos.x << ' ' << mouse_pos.y
+    //           << "startX = " << config->windowX - config->offsetX
+    //           << "startY = " << config->windowY - config->offsetY << '\n';
+    int cellX = (mouse_pos.x - (config->windowX - (config->windowX - config->offsetX)))
+            / config->size_cell;
+    int cellY = (mouse_pos.y - (config->windowY - (config->windowY - config->offsetY)))
+            / config->size_cell;
+    if (cellX == last_clickX and cellY == last_clickY) {
+        return;
+    }
+    if (cellX >= config->field.sizeX or cellY >= config->field.sizeY or cellX < 0 or cellY < 0) {
+        return;
+    }
+    last_clickX = cellX;
+    last_clickY = cellY;
+    // std::cout << "cellX = " << cellX << " cellY = " << cellY << '\n';
+    config->field.field[cellY][cellX] = !config->field.field[cellY][cellX];
+    if (config->field.field[cellY][cellX]) {
+        config->live_cell_sum[cellY]++;
+    } else {
+        config->live_cell_sum[cellY]--;
+    }
+    print_squard(config->field.field[cellY][cellX], cellY, cellX, config->offsetX, config->offsetY);
+}
+
 void Game::Input::get_map_from_user(Game::Game_window& game_window)
 {
     game_window.get_config()->field.sizeX = 50;
@@ -51,6 +79,9 @@ void Game::Input::get_map_from_user(Game::Game_window& game_window)
                 if (process_the_key(event)) {
                     return;
                 };
+            }
+            if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+                process_mouse_click();
             }
             if (event.type == sf::Event::Resized) {
                 sf::FloatRect visiableArea(0, 0, event.size.width, event.size.height);
