@@ -62,7 +62,6 @@ std::vector<std::pair<int, int>> Game::Logic::change_state(Game::Field_t& field)
             }
         }
     }
-
     for (int i = 0; i < changed_cage.size(); i++) {
         field.field[changed_cage[i].first][changed_cage[i].second]
                 = !field.field[changed_cage[i].first][changed_cage[i].second];
