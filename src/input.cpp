@@ -147,8 +147,8 @@ int Game::Input::input_keyboard(sf::Event& event)
         break;
         print_squard(1, posY, posX, config->offsetX, config->offsetY);
     case sf::Keyboard::Space:
-				display();
-				return 1;
+        display();
+        return 1;
     default:
         break;
     }

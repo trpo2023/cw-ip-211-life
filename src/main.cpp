@@ -16,13 +16,13 @@ int main()
     // game_window.display();
     window.setKeyRepeatEnabled(false);
     bool resized = false;
-		game_window.display();
+    game_window.display();
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed)
                 window.close();
-						game_window.game(event);
+            game_window.game(event);
         }
         window.display();
     }
