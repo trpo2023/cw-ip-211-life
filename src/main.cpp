@@ -1,5 +1,4 @@
 #include <SFML/Graphics.hpp>
-#include <iostream>
 #include <string>
 
 #include <Game.hpp>
@@ -11,12 +10,9 @@ int main()
     sf::RenderWindow window(sf::VideoMode(windowX, windowY), "SFML works!");
     Game::Game_window game_window{window, windowX, windowY};
 
-    // game_window.input_p->get_map_from_user();
-
-    // game_window.display();
     window.setKeyRepeatEnabled(false);
-    bool resized = false;
     game_window.display();
+
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {

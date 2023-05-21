@@ -1,4 +1,3 @@
-#include <iostream>
 #include <map>
 #include <string>
 #include <vector>
@@ -15,6 +14,20 @@ int Game::Input::get_int(std::string& input, int& i)
     }
     i++;
     return stod(digit);
+}
+
+void Game::Input::print_squard(bool is_live, int coordY, int coordX)
+{
+    float offsetX = config->offsetX;
+    float offsetY = config->offsetY;
+    sf::RectangleShape cell(sf::Vector2f(config->size_cell, config->size_cell));
+    // cell.setScale(sf::Vector2f(0, 0));
+    cell.setPosition(sf::Vector2f(
+            coordX * config->size_cell + offsetX, coordY * config->size_cell + offsetY));
+    cell.setFillColor((is_live) ? sf::Color::White : sf::Color::Black);
+    cell.setOutlineThickness(1);
+    cell.setOutlineColor(sf::Color::White);
+    config->window_p->draw(cell);
 }
 
 void Game::Input::allocate_memory_for_field(Game::Field_t& map)
@@ -37,9 +50,6 @@ void Game::Game_window::setInputMode()
 void Game::Input::process_mouse_click()
 {
     sf::Vector2i mouse_pos = sf::Mouse::getPosition(*config->window_p);
-    // std::cout << mouse_pos.x << ' ' << mouse_pos.y
-    //           << "startX = " << config->windowX - config->offsetX
-    //           << "startY = " << config->windowY - config->offsetY << '\n';
     int cellX = (mouse_pos.x - (config->windowX - (config->windowX - config->offsetX)))
             / config->size_cell;
     int cellY = (mouse_pos.y - (config->windowY - (config->windowY - config->offsetY)))
@@ -50,48 +60,16 @@ void Game::Input::process_mouse_click()
     if (cellX >= config->field.sizeX or cellY >= config->field.sizeY or cellX < 0 or cellY < 0) {
         return;
     }
+
     last_clickX = cellX;
     last_clickY = cellY;
-    // std::cout << "cellX = " << cellX << " cellY = " << cellY << '\n';
     config->field.field[cellY][cellX] = !config->field.field[cellY][cellX];
     if (config->field.field[cellY][cellX]) {
         config->live_cell_sum[cellY]++;
     } else {
         config->live_cell_sum[cellY]--;
     }
-    print_squard(config->field.field[cellY][cellX], cellY, cellX, config->offsetX, config->offsetY);
-}
-
-void Game::Input::get_map_from_user()
-{
-    bool is_resized = false;
-
-    while (config->window_p->isOpen()) {
-        sf::Event event;
-        while (config->window_p->pollEvent(event)) {
-            if (event.type == sf::Event::Closed)
-                config->window_p->close();
-
-            int width, height;
-            if (event.type == sf::Event::Resized) {
-                is_resized = true;
-                height = event.size.height;
-                width = event.size.width;
-                config->window_p->clear();
-
-            } else if (is_resized) {
-                is_resized = false;
-                std::cout << "start\n";
-                resized(width, height);
-
-                config->window_p->clear();
-                display();
-                std::cout << "finish\n";
-            }
-        }
-
-        config->window_p->display();
-    }
+    print_squard(config->field.field[cellY][cellX], cellY, cellX);
 }
 
 void Game::Input::user_choise()
@@ -112,7 +90,7 @@ int Game::Input::input_keyboard(sf::Event& event)
     switch (event.key.code) {
     case sf::Keyboard::W:
     case sf::Keyboard::Up:
-        print_squard(config->field.field[posY][posX], posY, posX, config->offsetX, config->offsetY);
+        print_squard(config->field.field[posY][posX], posY, posX);
         posY = (config->field.sizeY + ((posY - 1) % config->field.sizeY)) % config->field.sizeY;
         user_choise();
 
@@ -120,20 +98,20 @@ int Game::Input::input_keyboard(sf::Event& event)
     case sf::Keyboard::A:
     case sf::Keyboard::Left:
 
-        print_squard(config->field.field[posY][posX], posY, posX, config->offsetX, config->offsetY);
+        print_squard(config->field.field[posY][posX], posY, posX);
 
         posX = (config->field.sizeX + ((posX - 1) % config->field.sizeX)) % config->field.sizeX;
         user_choise();
         break;
     case sf::Keyboard::S:
     case sf::Keyboard::Down:
-        print_squard(config->field.field[posY][posX], posY, posX, config->offsetX, config->offsetY);
+        print_squard(config->field.field[posY][posX], posY, posX);
         posY = (config->field.sizeY + ((posY + 1) % config->field.sizeY)) % config->field.sizeY;
         user_choise();
         break;
     case sf::Keyboard::D:
     case sf::Keyboard::Right:
-        print_squard(config->field.field[posY][posX], posY, posX, config->offsetX, config->offsetY);
+        print_squard(config->field.field[posY][posX], posY, posX);
         posX = (config->field.sizeX + ((posX + 1) % config->field.sizeX)) % config->field.sizeX;
         user_choise();
         break;
@@ -145,7 +123,7 @@ int Game::Input::input_keyboard(sf::Event& event)
             config->live_cell_sum[posY]--;
         }
         break;
-        print_squard(1, posY, posX, config->offsetX, config->offsetY);
+        print_squard(true, posY, posX);
     case sf::Keyboard::Space:
         display();
         return 1;
@@ -155,21 +133,39 @@ int Game::Input::input_keyboard(sf::Event& event)
     return 0;
 }
 
-int Game::Input::process_the_key(sf::Event& event)
+void Game::Game_window::game(sf::Event& event)
 {
-    if (config->input_mode) {
-        if (input_keyboard(event)) {
-            return 1;
-        };
-    } else if (config->game_mode) {
+    if (config->game_mode and !config->input_mode) {
+        if (event.type == sf::Event::KeyPressed) {
+            if (event.key.code == sf::Keyboard::Return) {
+                input_p->display(logic_p->change_state(config->field));
+            }
+        }
+    } else if (!config->game_mode and config->input_mode) {
+        if (event.type == sf::Event::KeyPressed) {
+            if (input_p->input_keyboard(event)) {
+                setGameMode();
+            };
+        }
+        if (!config->is_resized and sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+            input_p->process_mouse_click();
+        }
     }
-    return 0;
+    resized(event);
 }
 
-// bool Game::Input::define_the_key(sf::Event& event)
-// {
-//     for (int i = 0; i < key_count; i++)
-//         if (event.key.code == keyboard[i])
-//             return true;
-//     return false;
-// }
+void Game::Game_window::resized(sf::Event& event)
+{
+    static int width, height;
+    if (event.type == sf::Event::Resized) {
+        config->is_resized = true;
+        height = event.size.height;
+        width = event.size.width;
+        config->window_p->clear();
+        config->window_p->display();
+    } else if (config->is_resized) {
+        config->is_resized = false;
+        input_p->resized(width, height);
+        display();
+    }
+}
