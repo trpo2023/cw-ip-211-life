@@ -6,7 +6,6 @@
 #include <Game.hpp>
 
 template <typename T1, typename T2>
-
 int Game::Logic::counting_live_cells(Game::Field_t& field, T1 i, T2 k)
 {
     int count = 0;

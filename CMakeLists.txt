@@ -13,8 +13,10 @@ target_include_directories(${PROJECT_NAME} PRIVATE includes includes/database)
 add_executable(test.exe ./test/main.cpp ./src/input.cpp ./src/logics.cpp ./test/test.cpp)
 
 target_include_directories(test.exe PRIVATE thirdparty includes/database includes)
+target_link_libraries(test.exe sfml-graphics sfml-window sfml-system)
 
 # ****** SFML   ******
 
 find_package(SFML REQUIRED COMPONENTS system window graphics  )
 target_link_libraries(${PROJECT_NAME} sfml-graphics sfml-window sfml-system)
+
