@@ -1,3 +1,4 @@
+#include <chrono>
 #include <map>
 #include <string>
 #include <vector>
@@ -84,6 +85,17 @@ void Game::Input::user_choise()
     config->window_p->draw(cell);
 }
 
+void Game::Input::clear()
+{
+    for (int i = 0; i < config->field.sizeY; i++) {
+        config->live_cell_sum[i] = 0;
+        for (int k = 0; k < config->field.sizeX; k++) {
+            config->field.field[i][k] = false;
+        }
+    }
+    display();
+}
+
 int Game::Input::input_keyboard(sf::Event& event)
 {
     std::pair<int, int> change_cage;
@@ -123,7 +135,6 @@ int Game::Input::input_keyboard(sf::Event& event)
             config->live_cell_sum[posY]--;
         }
         break;
-        print_squard(true, posY, posX);
     case sf::Keyboard::Space:
         display();
         return 1;
@@ -135,9 +146,48 @@ int Game::Input::input_keyboard(sf::Event& event)
 
 void Game::Game_window::game(sf::Event& event)
 {
+    if (event.type == sf::Event::KeyPressed) {
+        switch (event.key.code) {
+        case sf::Keyboard::W:
+        case sf::Keyboard::A:
+        case sf::Keyboard::S:
+        case sf::Keyboard::D:
+            setInputMode();
+            if (input_p->input_keyboard(event)) {
+                setGameMode();
+            };
+
+            if (!config->is_resized and sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+                input_p->process_mouse_click();
+            }
+            break;
+        case sf::Keyboard::K:
+            input_p->clear();
+            break;
+        case sf::Keyboard::R:
+            config->cur_time = std::chrono::duration_cast<std::chrono::milliseconds>(
+                                       std::chrono::system_clock::now().time_since_epoch())
+                                       .count();
+            config->auto_change = !config->auto_change;
+            break;
+
+        default:
+            break;
+        }
+    }
     if (config->game_mode and !config->input_mode) {
-        if (event.type == sf::Event::KeyPressed) {
-            if (event.key.code == sf::Keyboard::Return) {
+        auto time_now = std::chrono::system_clock::now();
+        int64_t ms
+                = std::chrono::duration_cast<std::chrono::milliseconds>(time_now.time_since_epoch())
+                          .count();
+
+        if (config->auto_change) {
+            if (config->cur_time + config->delay_between_changed_generations < ms) {
+                input_p->display(logic_p->change_state(config->field));
+                config->cur_time = ms;
+            }
+        } else if (event.type == sf::Event::KeyPressed) {
+            if (event.key.code == sf::Keyboard::O) {
                 input_p->display(logic_p->change_state(config->field));
             }
         }

@@ -11,15 +11,15 @@ int main()
     Game::Game_window game_window{window, windowX, windowY};
 
     window.setKeyRepeatEnabled(false);
-    game_window.display();
 
     while (window.isOpen()) {
         sf::Event event;
-        while (window.pollEvent(event)) {
+        while (window.pollEvent(event) or game_window.get_config()->auto_change) {
             if (event.type == sf::Event::Closed)
                 window.close();
             game_window.game(event);
-        }
+        };
+
         window.display();
     }
     return 0;
