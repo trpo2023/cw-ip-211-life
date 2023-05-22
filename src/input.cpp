@@ -148,6 +148,19 @@ void Game::Game_window::game(sf::Event& event)
 {
     if (event.type == sf::Event::KeyPressed) {
         switch (event.key.code) {
+        case sf::Keyboard::W:
+        case sf::Keyboard::A:
+        case sf::Keyboard::S:
+        case sf::Keyboard::D:
+            setInputMode();
+            if (input_p->input_keyboard(event)) {
+                setGameMode();
+            };
+
+            if (!config->is_resized and sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+                input_p->process_mouse_click();
+            }
+            break;
         case sf::Keyboard::K:
             input_p->clear();
             break;
