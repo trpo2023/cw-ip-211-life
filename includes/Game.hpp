@@ -119,7 +119,6 @@ public:
         if (font_size > 20) {
             font_size = 20;
         }
-        std::cout << font_size << '\n';
         sf::Text manual_text;
         sf::Font font;
         font.loadFromFile("../font/Ubuntu-Regular.ttf");
@@ -131,10 +130,7 @@ public:
             manual_text.setString(cur_manual_text[i]);
             manual_text.setPosition(sf::Vector2f(unit * i, y));
             config->window_p->draw(manual_text);
-            config->window_p->display();
         }
-
-        // config->window_p->display();
     }
 
     void display()
@@ -144,8 +140,6 @@ public:
                 print_squard(config->field.field[i][k], i, k);
             }
         }
-        config->window_p->display();
-
         print_manual();
         config->window_p->display();
     }
@@ -174,6 +168,7 @@ private:
                        "Spase - input/game",
                        "w, a, s, d - controlling",
                        "enter - select cell",
+                       "LMB - change cell state",
                        "k = clear map",
                },
                {
