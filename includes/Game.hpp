@@ -1,6 +1,8 @@
 #include <SFML/Graphics.hpp>
-#include <string>
 #include <chrono>
+#include <iostream>
+#include <limits>
+#include <string>
 #ifndef MAP_HPP
 #define MAP_HPP
 
@@ -26,9 +28,9 @@ public:
     bool is_resized = false;
     float offsetX;
     float offsetY;
-		bool auto_change = false;
-		int delay_between_changed_generations = 1000;
-		int64_t cur_time;
+    bool auto_change = false;
+    int delay_between_changed_generations = 1000;
+    int64_t cur_time;
 };
 
 class Logic {
@@ -72,6 +74,69 @@ public:
         calc_offsets();
     }
 
+    void print_manual()
+    {
+        // int width = config->field.sizeX * config->size_cell;
+        // int indent = 20;
+
+        // if (config->input_mode and !config->game_mode) {
+        //     int mess_number = manual[0].size();
+        //     int min_message_size = std::numeric_limits<int>::max();
+        //     for (auto& x : manual[0]) {
+        //         if (x.size() < min_message_size)
+        //             min_message_size = x.size();
+        //     }
+        //     int measurement_unit = width / min_message_size + indent;
+        // 		int common_number_of_unit = width / measurement_unit;
+        // 		std::vector<int> distribution_of_units(mess_number);
+        // 		for (auto&x : distribution_of_units)
+        // 			x = common_number_of_unit / mess_number;
+        // 		for(int i = 0; i < mess_number; i++) {
+        // 			if ()
+        // 		}
+        // }
+
+        int width = config->windowX;
+        int startX = 0;
+        float font_coof = 2;
+        int y = config->windowY - config->offsetY / 2;
+        std::vector<std::string> cur_manual_text;
+
+        if (config->input_mode and !config->game_mode) {
+            cur_manual_text = manual[0];
+        } else {
+            cur_manual_text = manual[1];
+        }
+
+        int mess_number = cur_manual_text.size();
+        int unit = width / mess_number;
+        int max_message_size = 0;
+        for (int i = 0; i < mess_number; i++) {
+            if (cur_manual_text[i].size() > max_message_size)
+                max_message_size = cur_manual_text[i].size();
+        }
+        float font_size = (unit / static_cast<float>(max_message_size)) * font_coof;
+        if (font_size > 20) {
+            font_size = 20;
+        }
+        std::cout << font_size << '\n';
+        sf::Text manual_text;
+        sf::Font font;
+        font.loadFromFile("../font/Ubuntu-Regular.ttf");
+        manual_text.setFont(font);
+        manual_text.setCharacterSize(font_size);
+        config->window_p->draw(manual_text);
+        config->window_p->display();
+        for (int i = 0; i < mess_number; i++) {
+            manual_text.setString(cur_manual_text[i]);
+            manual_text.setPosition(sf::Vector2f(unit * i, y));
+            config->window_p->draw(manual_text);
+            config->window_p->display();
+        }
+
+        // config->window_p->display();
+    }
+
     void display()
     {
         for (int i = 0; i < config->field.sizeY; i++) {
@@ -79,6 +144,9 @@ public:
                 print_squard(config->field.field[i][k], i, k);
             }
         }
+        config->window_p->display();
+
+        print_manual();
         config->window_p->display();
     }
 
@@ -100,6 +168,20 @@ public:
     void process_mouse_click();
 
 private:
+    static const int manual_size = 2;
+    std::vector<std::vector<std::string>> manual
+            = {{
+                       "Spase - input/game",
+                       "w, a, s, d - controlling",
+                       "enter - select cell",
+                       "k = clear map",
+               },
+               {
+                       "Spase - input/game",
+                       "o - change generation",
+                       "r - auto/manual",
+                       "k = clear map",
+               }};
     void user_choise();
     int get_int(std::string& input, int& i);
 

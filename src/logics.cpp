@@ -40,7 +40,7 @@ std::vector<std::pair<int, int>> Game::Logic::change_state(Game::Field_t& field)
 {
     std::vector<std::pair<int, int>> changed_cage;
     for (int i = 0; i < field.sizeY; i++) {
-        if (i < field.sizeX - 2) {
+        if (i < field.sizeX - 1) {
             int tmp_sum = ((i >= 1) ? config->live_cell_sum[i - 1] : 0) + config->live_cell_sum[i]
                     + config->live_cell_sum[i + 1];
             if (tmp_sum == 0) {

@@ -156,6 +156,7 @@ void Game::Game_window::game(sf::Event& event)
             } else {
                 setInputMode();
             }
+            config->window_p->clear();
             display();
             return;
             break;
