@@ -20,18 +20,21 @@ struct Settings {
     int windowY;
     int x;
     int y;
+    int cur_choise = 0;
+    int delay_between_changed_generations = 1000;
+
     float offsetX;
     float offsetY;
-    int delay_between_changed_generations = 1000;
-    int* order[3] = {&x, &y, &delay_between_changed_generations};
     float margin = 0.1;
+
+    int* order[3] = {&x, &y, &delay_between_changed_generations};
     std::vector<std::string> property
             = {"size map X",
                "size map Y",
                "delay",
                "enter - to chose property and then enter to accept property\ndown, Up - to "
                "control\nM - to accept changes"};
-    int cur_choise = 0;
+		bool is_changed = false;
 };
 class window_config {
 public:

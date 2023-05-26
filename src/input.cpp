@@ -248,7 +248,8 @@ void Game::Input::relocate()
     config->settings_mode = false;
     calculate_cell_size();
     calc_offsets();
-    allocate_memory_for_field(config->field);
+    if (config->settings.is_changed)
+        allocate_memory_for_field(config->field);
     config->window_p->clear();
     display();
 }
@@ -285,12 +286,12 @@ void Game::Input::control_settings(sf::Event& event)
             user_choise_settings(sf::Color::Red);
 
             while (config->window_settings->waitEvent(event)) {
-                std::cout << event.key.code << '\n';
                 if (event.type == sf::Event::KeyPressed) {
                     if (event.key.code == sf::Keyboard::Enter) {
                         if (*config->settings.order[config->settings.cur_choise] == 0) {
                             continue;
                         }
+                        config->settings.is_changed = true;
                         break;
                     }
                     if (event.key.code == sf::Keyboard::BackSpace) {
