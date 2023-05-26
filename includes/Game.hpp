@@ -34,7 +34,7 @@ struct Settings {
                "delay",
                "enter - to chose property and then enter to accept property\ndown, Up - to "
                "control\nM - to accept changes"};
-		bool is_changed = false;
+    bool is_changed = false;
 };
 class window_config {
 public:
@@ -167,7 +167,7 @@ public:
     void allocate_memory_for_field(Game::Field_t& map);
     void input_keyboard(sf::Event&);
     void control_settings(sf::Event&);
-    void user_choise_settings(sf::Color);
+    void draw_property(sf::Color, int);
     void relocate();
     void install_font(sf::Text&, int, std::string);
 

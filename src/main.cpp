@@ -18,7 +18,6 @@ int main()
                 window.close();
         };
         game_window.game(event);
-				
     }
     return 0;
 }

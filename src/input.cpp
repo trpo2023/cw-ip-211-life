@@ -169,33 +169,28 @@ void Game::Game_window::configurate_settings()
     setSettingMode();
 }
 
-void Game::Input::user_choise_settings(sf::Color color)
+void Game::Input::draw_property(sf::Color color, int index)
 {
-    sf::RectangleShape choise(
-            sf::Vector2f(config->settings.windowX - config->settings.offsetX, 100));
-    choise.setPosition(sf::Vector2f(
-            config->settings.offsetX,
-            config->settings.offsetY + 100 * config->settings.cur_choise));
+    static float offsetX = config->settings.offsetX;
+    static float offsetY = config->settings.offsetY;
+    static int margin = 100;
+    static sf::RectangleShape choise(sf::Vector2f(config->settings.windowX - offsetX, margin));
+    static sf::Text property_text;
+    static sf::Text property_value;
+    static sf::Font font;
+
+    install_font(property_text, 20, "../font/Ubuntu-Regular.ttf");
+    install_font(property_value, 20, "../font/Ubuntu-Regular.ttf");
+    choise.setPosition(sf::Vector2f(offsetX, offsetY + margin * index));
     choise.setFillColor(color);
     config->window_settings->draw(choise);
-    sf::Text property_text;
-    sf::Text property_value;
-    sf::Font font;
-    font.loadFromFile("../font/Ubuntu-Regular.ttf");
-    property_text.setFont(font);
-    property_text.setCharacterSize(20);
-    property_value.setFont(font);
-    property_value.setCharacterSize(20);
 
-    property_text.setString(config->settings.property[config->settings.cur_choise]);
-    property_text.setPosition(sf::Vector2f(
-            config->settings.offsetX,
-            config->settings.offsetY + 100 * config->settings.cur_choise));
+    property_text.setString(config->settings.property[index]);
+    property_text.setPosition(sf::Vector2f(offsetX, offsetY + margin * index));
     config->window_settings->draw(property_text);
-    property_value.setPosition(sf::Vector2f(
-            config->settings.windowX - config->settings.offsetX,
-            config->settings.offsetY + 100 * config->settings.cur_choise));
-    property_value.setString(std::to_string(*config->settings.order[config->settings.cur_choise]));
+    property_value.setPosition(
+            sf::Vector2f(config->settings.windowX - offsetX, offsetY + margin * index));
+    property_value.setString(std::to_string(*config->settings.order[index]));
     config->window_settings->draw(property_value);
     config->window_settings->display();
 }
@@ -212,34 +207,24 @@ void Game::Input::draw_settings()
 {
     sf::Text property_text;
     sf::Text property_value;
-    install_font(property_text, 20, "../font/Ubuntu-Regular.ttf");
-    install_font(property_value, 20, "../font/Ubuntu-Regular.ttf");
-
-    float offsetX = config->settings.offsetX;
-    float offsetY = config->settings.offsetY;
-
-    int margin = 100;
 
     for (int i = 0; i < config->settings.property.size() - 1; i++) {
         if (config->settings.cur_choise == i) {
-            user_choise_settings(sf::Color::Blue);
+            draw_property(sf::Color::Blue, i);
+        } else {
+            draw_property(sf::Color::Black, i);
         }
-        property_text.setString(config->settings.property[i]);
-        property_text.setPosition(sf::Vector2f(offsetX, offsetY + margin * i));
+        int porperty_size = config->settings.property.size();
+        property_text.setString(config->settings.property[porperty_size - 1]);
+        property_text.setPosition(sf::Vector2f(
+                config->settings.offsetX, config->settings.offsetY + 100 * (porperty_size - 1)));
+        property_text.setCharacterSize(
+                (config->settings.windowX / config->settings.property[porperty_size - 1].size())
+                * 2);
         config->window_settings->draw(property_text);
-        property_value.setPosition(
-                sf::Vector2f(config->settings.windowX - offsetX, offsetY + margin * i));
-        property_value.setString(std::to_string(*config->settings.order[i]));
-        config->window_settings->draw(property_value);
-    }
-    int porperty_size = config->settings.property.size();
-    property_text.setString(config->settings.property[porperty_size - 1]);
-    property_text.setPosition(sf::Vector2f(offsetX, offsetY + margin * (porperty_size - 1)));
-    property_text.setCharacterSize(
-            (config->settings.windowX / config->settings.property[porperty_size - 1].size()) * 2);
-    config->window_settings->draw(property_text);
 
-    config->window_settings->display();
+        config->window_settings->display();
+    }
 }
 
 void Game::Input::relocate()
@@ -266,24 +251,24 @@ void Game::Input::control_settings(sf::Event& event)
             config->window_p->display();
             return;
         case sf::Keyboard::Up:
-            user_choise_settings(sf::Color::Black);
+            draw_property(sf::Color::Black, config->settings.cur_choise);
 
             config->settings.cur_choise
                     = ((config->settings.cur_choise - 1 < 0) ? config->settings.property.size() - 2
                                                              : (config->settings.cur_choise - 1)
                                        % (config->settings.property.size() - 1));
-            user_choise_settings(sf::Color::Blue);
+            draw_property(sf::Color::Blue, config->settings.cur_choise);
             break;
         case sf::Keyboard::Down:
-            user_choise_settings(sf::Color::Black);
+            draw_property(sf::Color::Black, config->settings.cur_choise);
 
             config->settings.cur_choise
                     = (config->settings.cur_choise + 1) % (config->settings.property.size() - 1);
-            user_choise_settings(sf::Color::Blue);
+            draw_property(sf::Color::Blue, config->settings.cur_choise);
 
             break;
         case sf::Keyboard::Enter:
-            user_choise_settings(sf::Color::Red);
+            draw_property(sf::Color::Red, config->settings.cur_choise);
 
             while (config->window_settings->waitEvent(event)) {
                 if (event.type == sf::Event::KeyPressed) {
@@ -299,13 +284,14 @@ void Game::Input::control_settings(sf::Event& event)
                             new_value.pop_back();
                             *config->settings.order[config->settings.cur_choise]
                                     = std::stoi((new_value.c_str()));
-                            user_choise_settings(sf::Color::Red);
+                            draw_property(sf::Color::Red, config->settings.cur_choise);
+
                             continue;
                         } else {
                             if (new_value.size() != 0)
                                 new_value.pop_back();
                             *config->settings.order[config->settings.cur_choise] = 0;
-                            user_choise_settings(sf::Color::Red);
+                            draw_property(sf::Color::Red, config->settings.cur_choise);
                         }
                     }
                 }
@@ -316,7 +302,7 @@ void Game::Input::control_settings(sf::Event& event)
                             new_value.push_back(event.text.unicode);
                             *config->settings.order[config->settings.cur_choise]
                                     = std::stoi((new_value.c_str()));
-                            user_choise_settings(sf::Color::Red);
+                            draw_property(sf::Color::Red, config->settings.cur_choise);
                         }
                     }
                 }
