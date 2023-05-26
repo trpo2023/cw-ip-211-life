@@ -200,38 +200,43 @@ void Game::Input::user_choise_settings(sf::Color color)
     config->window_settings->display();
 }
 
+void Game::Input::install_font(sf::Text& text, int char_size, std::string font_path)
+{
+    static sf::Font font;
+    font.loadFromFile(font_path);
+    text.setFont(font);
+    text.setCharacterSize(char_size);
+}
+
 void Game::Input::draw_settings()
 {
     sf::Text property_text;
     sf::Text property_value;
-    sf::Font font;
-    font.loadFromFile("../font/Ubuntu-Regular.ttf");
-    property_text.setFont(font);
-    property_text.setCharacterSize(20);
-    property_value.setFont(font);
-    property_value.setCharacterSize(20);
+    install_font(property_text, 20, "../font/Ubuntu-Regular.ttf");
+    install_font(property_value, 20, "../font/Ubuntu-Regular.ttf");
+
+    float offsetX = config->settings.offsetX;
+    float offsetY = config->settings.offsetY;
+
+    int margin = 100;
+
     for (int i = 0; i < config->settings.property.size() - 1; i++) {
         if (config->settings.cur_choise == i) {
             user_choise_settings(sf::Color::Blue);
         }
         property_text.setString(config->settings.property[i]);
-        property_text.setPosition(
-                sf::Vector2f(config->settings.offsetX, config->settings.offsetY + 100 * i));
+        property_text.setPosition(sf::Vector2f(offsetX, offsetY + margin * i));
         config->window_settings->draw(property_text);
-        property_value.setPosition(sf::Vector2f(
-                config->settings.windowX - config->settings.offsetX,
-                config->settings.offsetY + 100 * i));
+        property_value.setPosition(
+                sf::Vector2f(config->settings.windowX - offsetX, offsetY + margin * i));
         property_value.setString(std::to_string(*config->settings.order[i]));
         config->window_settings->draw(property_value);
     }
-    property_text.setString(config->settings.property[config->settings.property.size() - 1]);
-    property_text.setPosition(sf::Vector2f(
-            config->settings.offsetX,
-            config->settings.offsetY + 100 * (config->settings.property.size() - 1)));
+    int porperty_size = config->settings.property.size();
+    property_text.setString(config->settings.property[porperty_size - 1]);
+    property_text.setPosition(sf::Vector2f(offsetX, offsetY + margin * (porperty_size - 1)));
     property_text.setCharacterSize(
-            (config->settings.windowX
-             / config->settings.property[config->settings.property.size() - 1].size())
-            * 2);
+            (config->settings.windowX / config->settings.property[porperty_size - 1].size()) * 2);
     config->window_settings->draw(property_text);
 
     config->window_settings->display();

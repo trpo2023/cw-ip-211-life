@@ -166,6 +166,7 @@ public:
     void control_settings(sf::Event&);
     void user_choise_settings(sf::Color);
     void relocate();
+    void install_font(sf::Text&, int, std::string);
 
     void process_mouse_click();
 
