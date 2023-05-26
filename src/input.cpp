@@ -283,24 +283,35 @@ void Game::Input::control_settings(sf::Event& event)
                 std::cout << event.key.code << '\n';
                 if (event.type == sf::Event::KeyPressed) {
                     if (event.key.code == sf::Keyboard::Enter) {
+                        if (*config->settings.order[config->settings.cur_choise] == 0) {
+                            continue;
+                        }
                         break;
                     }
                     if (event.key.code == sf::Keyboard::BackSpace) {
-                        if (new_value.size() != 0) {
+                        if (new_value.size() > 1) {
                             new_value.pop_back();
                             *config->settings.order[config->settings.cur_choise]
                                     = std::stoi((new_value.c_str()));
                             user_choise_settings(sf::Color::Red);
                             continue;
+                        } else {
+                            if (new_value.size() != 0)
+                                new_value.pop_back();
+                            *config->settings.order[config->settings.cur_choise] = 0;
+                            user_choise_settings(sf::Color::Red);
                         }
                     }
                 }
                 if (event.type == sf::Event::TextEntered) {
                     if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
-                        new_value.push_back(event.text.unicode);
-                        *config->settings.order[config->settings.cur_choise]
-                                = std::stoi((new_value.c_str()));
-                        user_choise_settings(sf::Color::Red);
+                        if (new_value.size() < 5 and event.text.unicode >= '0'
+                            and event.text.unicode <= '9') {
+                            new_value.push_back(event.text.unicode);
+                            *config->settings.order[config->settings.cur_choise]
+                                    = std::stoi((new_value.c_str()));
+                            user_choise_settings(sf::Color::Red);
+                        }
                     }
                 }
             }
