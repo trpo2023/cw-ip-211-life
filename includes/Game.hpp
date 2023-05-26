@@ -25,6 +25,7 @@ public:
     Field_t field;
     bool input_mode;
     bool game_mode;
+    bool settings_mode;
     bool is_resized = false;
     float offsetX;
     float offsetY;
@@ -182,6 +183,7 @@ public:
         config->field.sizeY = 50;
         config->input_mode = true;
         config->game_mode = false;
+        config->settings_mode = false;
 
         static Input input{config};
         static Logic logic{config};
@@ -207,6 +209,7 @@ public:
     {
         config->game_mode = true;
         config->input_mode = false;
+        config->settings_mode = false;
     }
 
     window_config*& get_config()
@@ -218,6 +221,7 @@ public:
     void setInputMode();
 
 private:
+    void setSettingMode();
     void resized(sf::Event& event);
 
     window_config* config;

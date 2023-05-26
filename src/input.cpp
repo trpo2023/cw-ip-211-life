@@ -46,6 +46,7 @@ void Game::Game_window::setInputMode()
 {
     config->input_mode = true;
     config->game_mode = false;
+    config->settings_mode = false;
 }
 
 void Game::Input::process_mouse_click()
@@ -139,6 +140,13 @@ void Game::Input::input_keyboard(sf::Event& event)
     return;
 }
 
+void Game::Game_window::setSettingMode()
+{
+    config->settings_mode = true;
+    config->game_mode = false;
+    config->input_mode = false;
+}
+
 void Game::Game_window::game(sf::Event& event)
 {
     if (event.type == sf::Event::KeyPressed) {
@@ -165,12 +173,13 @@ void Game::Game_window::game(sf::Event& event)
             config->auto_change = !config->auto_change;
             break;
         case sf::Keyboard::M:
-
+            setSettingMode();
+            break;
         default:
             break;
         }
     }
-    if (config->game_mode and !config->input_mode) {
+    if (config->game_mode and !config->input_mode and !config->settings_mode) {
         auto time_now = std::chrono::system_clock::now();
         int64_t ms
                 = std::chrono::duration_cast<std::chrono::milliseconds>(time_now.time_since_epoch())
@@ -186,7 +195,7 @@ void Game::Game_window::game(sf::Event& event)
                 input_p->display(logic_p->change_state(config->field));
             }
         }
-    } else if (!config->game_mode and config->input_mode) {
+    } else if (!config->game_mode and config->input_mode and !config->settings_mode) {
         if (event.type == sf::Event::KeyPressed) {
             input_p->input_keyboard(event);
             // if (input_p->input_keyboard(event)) {
@@ -196,6 +205,7 @@ void Game::Game_window::game(sf::Event& event)
         if (!config->is_resized and sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
             input_p->process_mouse_click();
         }
+    } else if (config->settings_mode and !config->game_mode and !config->input_mode) {
     }
     resized(event);
 }
