@@ -198,8 +198,7 @@ private:
 };
 class Game_window {
 public:
-    Logic* logic_p;
-    Input* input_p;
+
     Game_window(sf::RenderWindow& window, int x, int y)
     {
         config = new window_config();
@@ -252,6 +251,8 @@ public:
     void setInputMode();
 
 private:
+    Logic* logic_p;
+    Input* input_p;
     void configurate_settings();
     void setSettingMode();
     bool resized(sf::Event& event);
