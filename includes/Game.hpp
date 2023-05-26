@@ -76,26 +76,6 @@ public:
 
     void print_manual()
     {
-        // int width = config->field.sizeX * config->size_cell;
-        // int indent = 20;
-
-        // if (config->input_mode and !config->game_mode) {
-        //     int mess_number = manual[0].size();
-        //     int min_message_size = std::numeric_limits<int>::max();
-        //     for (auto& x : manual[0]) {
-        //         if (x.size() < min_message_size)
-        //             min_message_size = x.size();
-        //     }
-        //     int measurement_unit = width / min_message_size + indent;
-        // 		int common_number_of_unit = width / measurement_unit;
-        // 		std::vector<int> distribution_of_units(mess_number);
-        // 		for (auto&x : distribution_of_units)
-        // 			x = common_number_of_unit / mess_number;
-        // 		for(int i = 0; i < mess_number; i++) {
-        // 			if ()
-        // 		}
-        // }
-
         int width = config->windowX;
         int startX = 0;
         float font_coof = 2;
@@ -111,6 +91,7 @@ public:
         int mess_number = cur_manual_text.size();
         int unit = width / mess_number;
         int max_message_size = 0;
+
         for (int i = 0; i < mess_number; i++) {
             if (cur_manual_text[i].size() > max_message_size)
                 max_message_size = cur_manual_text[i].size();
@@ -158,7 +139,7 @@ public:
     }
 
     void allocate_memory_for_field(Game::Field_t& map);
-    int input_keyboard(sf::Event&);
+    void input_keyboard(sf::Event&);
     void process_mouse_click();
 
 private:

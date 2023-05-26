@@ -51,10 +51,8 @@ void Game::Game_window::setInputMode()
 void Game::Input::process_mouse_click()
 {
     sf::Vector2i mouse_pos = sf::Mouse::getPosition(*config->window_p);
-    int cellX = (mouse_pos.x - (config->windowX - (config->windowX - config->offsetX)))
-            / config->size_cell;
-    int cellY = (mouse_pos.y - (config->windowY - (config->windowY - config->offsetY)))
-            / config->size_cell;
+    int cellX = (mouse_pos.x - config->offsetX) / config->size_cell;
+    int cellY = (mouse_pos.y - config->offsetY) / config->size_cell;
     if (cellX == last_clickX and cellY == last_clickY) {
         return;
     }
@@ -96,7 +94,7 @@ void Game::Input::clear()
     display();
 }
 
-int Game::Input::input_keyboard(sf::Event& event)
+void Game::Input::input_keyboard(sf::Event& event)
 {
     std::pair<int, int> change_cage;
     switch (event.key.code) {
@@ -135,13 +133,10 @@ int Game::Input::input_keyboard(sf::Event& event)
             config->live_cell_sum[posY]--;
         }
         break;
-    case sf::Keyboard::Space:
-        display();
-        return 1;
     default:
         break;
     }
-    return 0;
+    return;
 }
 
 void Game::Game_window::game(sf::Event& event)
@@ -169,6 +164,7 @@ void Game::Game_window::game(sf::Event& event)
                                        .count();
             config->auto_change = !config->auto_change;
             break;
+        case sf::Keyboard::M:
 
         default:
             break;
@@ -192,9 +188,10 @@ void Game::Game_window::game(sf::Event& event)
         }
     } else if (!config->game_mode and config->input_mode) {
         if (event.type == sf::Event::KeyPressed) {
-            if (input_p->input_keyboard(event)) {
-                setGameMode();
-            };
+            input_p->input_keyboard(event);
+            // if (input_p->input_keyboard(event)) {
+            //     setGameMode();
+            // };
         }
         if (!config->is_resized and sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
             input_p->process_mouse_click();
