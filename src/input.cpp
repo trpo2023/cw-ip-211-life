@@ -34,8 +34,10 @@ void Game::Input::print_squard(bool is_live, int coordY, int coordX)
 void Game::Input::allocate_memory_for_field(Game::Field_t& map)
 {
     map.field = new bool*[map.sizeY];
+    config->live_cell_sum = new int[map.sizeY];
     for (int i = 0; i < map.sizeY; i++) {
         map.field[i] = new bool[map.sizeX];
+        config->live_cell_sum[i] = 0;
         for (int k = 0; k < map.sizeX; k++) {
             map.field[i][k] = 0;
         }
@@ -70,6 +72,7 @@ void Game::Input::process_mouse_click()
         config->live_cell_sum[cellY]--;
     }
     print_squard(config->field.field[cellY][cellX], cellY, cellX);
+    config->window_p->display();
 }
 
 void Game::Input::user_choise()
@@ -82,6 +85,7 @@ void Game::Input::user_choise()
     cell.setOutlineThickness(1);
     cell.setOutlineColor(sf::Color::White);
     config->window_p->draw(cell);
+    config->window_p->display();
 }
 
 void Game::Input::clear()
@@ -147,8 +151,189 @@ void Game::Game_window::setSettingMode()
     config->input_mode = false;
 }
 
+void Game::Game_window::configurate_settings()
+{
+    config->settings.x = config->field.sizeX;
+    config->settings.y = config->field.sizeY;
+    config->settings.windowX = config->windowX;
+    config->settings.windowY = config->windowY;
+    config->settings.offsetX = config->settings.windowX * config->margin;
+    config->settings.offsetY = config->settings.windowY * config->margin;
+    config->window_settings = new sf::RenderWindow(
+            sf::VideoMode(config->settings.windowX, config->settings.windowY), "settings");
+    config->window_settings->setPosition(sf::Vector2i(0, 0));
+    config->window_settings->setKeyRepeatEnabled(false);
+
+    input_p->draw_settings();
+
+    setSettingMode();
+}
+
+void Game::Input::user_choise_settings(sf::Color color)
+{
+    sf::RectangleShape choise(
+            sf::Vector2f(config->settings.windowX - config->settings.offsetX, 100));
+    choise.setPosition(sf::Vector2f(
+            config->settings.offsetX,
+            config->settings.offsetY + 100 * config->settings.cur_choise));
+    choise.setFillColor(color);
+    config->window_settings->draw(choise);
+    sf::Text property_text;
+    sf::Text property_value;
+    sf::Font font;
+    font.loadFromFile("../font/Ubuntu-Regular.ttf");
+    property_text.setFont(font);
+    property_text.setCharacterSize(20);
+    property_value.setFont(font);
+    property_value.setCharacterSize(20);
+
+    property_text.setString(config->settings.property[config->settings.cur_choise]);
+    property_text.setPosition(sf::Vector2f(
+            config->settings.offsetX,
+            config->settings.offsetY + 100 * config->settings.cur_choise));
+    config->window_settings->draw(property_text);
+    property_value.setPosition(sf::Vector2f(
+            config->settings.windowX - config->settings.offsetX,
+            config->settings.offsetY + 100 * config->settings.cur_choise));
+    property_value.setString(std::to_string(*config->settings.order[config->settings.cur_choise]));
+    config->window_settings->draw(property_value);
+    config->window_settings->display();
+}
+
+void Game::Input::draw_settings()
+{
+    sf::Text property_text;
+    sf::Text property_value;
+    sf::Font font;
+    font.loadFromFile("../font/Ubuntu-Regular.ttf");
+    property_text.setFont(font);
+    property_text.setCharacterSize(20);
+    property_value.setFont(font);
+    property_value.setCharacterSize(20);
+    for (int i = 0; i < config->settings.property.size() - 1; i++) {
+        if (config->settings.cur_choise == i) {
+            user_choise_settings(sf::Color::Blue);
+        }
+        property_text.setString(config->settings.property[i]);
+        property_text.setPosition(
+                sf::Vector2f(config->settings.offsetX, config->settings.offsetY + 100 * i));
+        config->window_settings->draw(property_text);
+        property_value.setPosition(sf::Vector2f(
+                config->settings.windowX - config->settings.offsetX,
+                config->settings.offsetY + 100 * i));
+        property_value.setString(std::to_string(*config->settings.order[i]));
+        config->window_settings->draw(property_value);
+    }
+    property_text.setString(config->settings.property[config->settings.property.size() - 1]);
+    property_text.setPosition(sf::Vector2f(
+            config->settings.offsetX,
+            config->settings.offsetY + 100 * (config->settings.property.size() - 1)));
+    property_text.setCharacterSize(
+            (config->settings.windowX
+             / config->settings.property[config->settings.property.size() - 1].size())
+            * 2);
+    config->window_settings->draw(property_text);
+
+    config->window_settings->display();
+}
+
+void Game::Input::relocate()
+{
+    config->input_mode = true;
+    config->settings_mode = false;
+    calculate_cell_size();
+    calc_offsets();
+    allocate_memory_for_field(config->field);
+    config->window_p->clear();
+    display();
+}
+
+void Game::Input::control_settings(sf::Event& event)
+{
+    std::string new_value;
+    if (event.type == sf::Event::KeyPressed) {
+        switch (event.key.code) {
+        case sf::Keyboard::M:
+            relocate();
+
+            config->window_settings->close();
+            config->window_p->display();
+            return;
+        case sf::Keyboard::Up:
+            user_choise_settings(sf::Color::Black);
+
+            config->settings.cur_choise
+                    = ((config->settings.cur_choise - 1 < 0) ? config->settings.property.size() - 2
+                                                             : (config->settings.cur_choise - 1)
+                                       % (config->settings.property.size() - 1));
+            user_choise_settings(sf::Color::Blue);
+            break;
+        case sf::Keyboard::Down:
+            user_choise_settings(sf::Color::Black);
+
+            config->settings.cur_choise
+                    = (config->settings.cur_choise + 1) % (config->settings.property.size() - 1);
+            user_choise_settings(sf::Color::Blue);
+
+            break;
+        case sf::Keyboard::Enter:
+            user_choise_settings(sf::Color::Red);
+
+            while (config->window_settings->waitEvent(event)) {
+                std::cout << event.key.code << '\n';
+                if (event.type == sf::Event::KeyPressed) {
+                    if (event.key.code == sf::Keyboard::Enter) {
+                        break;
+                    }
+                    if (event.key.code == sf::Keyboard::BackSpace) {
+                        if (new_value.size() != 0) {
+                            new_value.pop_back();
+                            *config->settings.order[config->settings.cur_choise]
+                                    = std::stoi((new_value.c_str()));
+                            user_choise_settings(sf::Color::Red);
+                            continue;
+                        }
+                    }
+                }
+                if (event.type == sf::Event::TextEntered) {
+                    if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
+                        new_value.push_back(event.text.unicode);
+                        *config->settings.order[config->settings.cur_choise]
+                                = std::stoi((new_value.c_str()));
+                        user_choise_settings(sf::Color::Red);
+                    }
+                }
+            }
+            switch (config->settings.cur_choise) {
+            case 0:
+                config->field.sizeX = std::stoi((new_value.c_str()));
+                break;
+            case 1:
+                config->field.sizeY = std::stoi((new_value.c_str()));
+                break;
+            case 2:
+                config->delay_between_changed_generations = std::stoi((new_value.c_str()));
+                break;
+            default:
+                break;
+            }
+            *config->settings.order[config->settings.cur_choise] = std::stoi((new_value.c_str()));
+            draw_settings();
+
+            break;
+
+        default:
+            break;
+        }
+    }
+}
+
 void Game::Game_window::game(sf::Event& event)
 {
+    if (resized(event)) {
+        return;
+    }
+
     if (event.type == sf::Event::KeyPressed) {
         switch (event.key.code) {
         case sf::Keyboard::Space:
@@ -173,7 +358,8 @@ void Game::Game_window::game(sf::Event& event)
             config->auto_change = !config->auto_change;
             break;
         case sf::Keyboard::M:
-            setSettingMode();
+            configurate_settings();
+
             break;
         default:
             break;
@@ -206,11 +392,26 @@ void Game::Game_window::game(sf::Event& event)
             input_p->process_mouse_click();
         }
     } else if (config->settings_mode and !config->game_mode and !config->input_mode) {
+        if (config->window_settings->isOpen()) {
+            static sf::Event settings_event;
+            while (config->window_settings->pollEvent(settings_event)) {
+                if (settings_event.type == sf::Event::Resized) {
+                    config->settings.windowX = settings_event.size.width;
+                    config->settings.windowY = settings_event.size.height;
+                    sf::FloatRect visiableArea(
+                            0, 0, config->settings.windowX, config->settings.windowY);
+                    config->window_settings->setView(sf::View(visiableArea));
+                    input_p->draw_settings();
+                }
+                if (settings_event.type == sf::Event::Closed)
+                    config->window_settings->close();
+                input_p->control_settings(settings_event);
+            }
+        }
     }
-    resized(event);
 }
 
-void Game::Game_window::resized(sf::Event& event)
+bool Game::Game_window::resized(sf::Event& event)
 {
     static int width, height;
     if (event.type == sf::Event::Resized) {
@@ -219,9 +420,12 @@ void Game::Game_window::resized(sf::Event& event)
         width = event.size.width;
         config->window_p->clear();
         config->window_p->display();
+        return true;
     } else if (config->is_resized) {
         config->is_resized = false;
         input_p->resized(width, height);
         display();
+        return true;
     }
+    return false;
 }
