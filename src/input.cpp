@@ -171,16 +171,15 @@ void Game::Game_window::configurate_settings()
 
 void Game::Input::draw_property(sf::Color color, int index)
 {
-    static float offsetX = config->settings.offsetX;
-    static float offsetY = config->settings.offsetY;
-    static int margin = 100;
-    static sf::RectangleShape choise(sf::Vector2f(config->settings.windowX - offsetX, margin));
-    static sf::Text property_text;
-    static sf::Text property_value;
-    static sf::Font font;
+    float offsetX = config->settings.offsetX;
+    float offsetY = config->settings.offsetY;
+    int margin = 100;
+    sf::RectangleShape choise(sf::Vector2f(config->settings.windowX - offsetX, margin));
+    sf::Text property_text;
+    sf::Text property_value;
 
-    install_font(property_text, 20, "../font/second_font.ttf");
-    install_font(property_value, 20, "../font/second_font.ttf");
+    install_font(property_text, 20, "../font/Ubuntu-Regular.ttf");
+    install_font(property_value, 20, "../font/Ubuntu-Regular.ttf");
     choise.setPosition(sf::Vector2f(offsetX, offsetY + margin * index));
     choise.setFillColor(color);
     config->window_settings->draw(choise);
@@ -207,8 +206,8 @@ void Game::Input::draw_settings()
 {
     sf::Text property_text;
     sf::Text property_value;
-    install_font(property_text, 20, "../font/second_font.ttf");
-    install_font(property_value, 20, "../font/second_font.ttf");
+    install_font(property_text, 20, "../font/Ubuntu-Regular.ttf");
+    install_font(property_value, 20, "../font/Ubuntu-Regular.ttf");
     float offsetX = config->settings.offsetX;
     float offsetY = config->settings.offsetY;
 
@@ -407,6 +406,8 @@ void Game::Game_window::game(sf::Event& event)
                 if (settings_event.type == sf::Event::Resized) {
                     config->settings.windowX = settings_event.size.width;
                     config->settings.windowY = settings_event.size.height;
+                    // config->settings.offsetX = config->settings.windowX * config->margin;
+                    // config->settings.offsetY = config->settings.windowY * config->margin;
                     sf::FloatRect visiableArea(
                             0, 0, config->settings.windowX, config->settings.windowY);
                     config->window_settings->setView(sf::View(visiableArea));
