@@ -40,8 +40,12 @@ class window_config {
 public:
     int windowX;
     int windowY;
-    float size_cell;
+    int delay_between_changed_generations = 1000;
+    int64_t cur_time;
     double margin = 0.1;
+    float size_cell;
+    float offsetX;
+    float offsetY;
     sf::RenderWindow* window_p;
     sf::RenderWindow* window_settings;
     int* live_cell_sum;
@@ -51,11 +55,7 @@ public:
     bool game_mode;
     bool settings_mode;
     bool is_resized = false;
-    float offsetX;
-    float offsetY;
     bool auto_change = false;
-    int delay_between_changed_generations = 1000;
-    int64_t cur_time;
 };
 
 class Backend {
@@ -79,115 +79,41 @@ public:
         config = config_gl;
     }
 
-    void display(std::vector<std::pair<int, int>> mas)
-    {
-        for (int i = 0; i < mas.size(); i++) {
-            print_squard(
-                    config->field.field[mas[i].first][mas[i].second], mas[i].first, mas[i].second);
-        }
-        config->window_p->display();
-    }
     void print_squard(bool is_live, int coordY, int coordX);
-    void draw_settings();
+    void print_manual();
+    void display(std::vector<std::pair<int, int>> mas);
+    void display();
 
-    void resized(int width, int height)
-    {
-        sf::FloatRect visiableArea(0, 0, width, height);
-        config->window_p->setView(sf::View(visiableArea));
-        config->windowX = width;
-        config->windowY = height;
-        calculate_cell_size();
-        calc_offsets();
-    }
+    void resized(int width, int height);
+    void calculate_cell_size();
+    void calc_offsets();
 
-    void print_manual()
-    {
-        int width = config->windowX;
-        int startX = 0;
-        float font_coof = 2;
-        int y = config->windowY - config->offsetY / 2;
-        std::vector<std::string> cur_manual_text;
-
-        if (config->input_mode and !config->game_mode) {
-            cur_manual_text = manual[0];
-        } else {
-            cur_manual_text = manual[1];
-        }
-
-        int mess_number = cur_manual_text.size();
-        int unit = width / mess_number;
-        int max_message_size = 0;
-
-        for (int i = 0; i < mess_number; i++) {
-            if (cur_manual_text[i].size() > max_message_size)
-                max_message_size = cur_manual_text[i].size();
-        }
-        float font_size = (unit / static_cast<float>(max_message_size)) * font_coof;
-        if (font_size > 20) {
-            font_size = 20;
-        }
-        sf::Text manual_text;
-        sf::Font font;
-        font.loadFromFile("../font/Ubuntu-Regular.ttf");
-        manual_text.setFont(font);
-        manual_text.setCharacterSize(font_size);
-        config->window_p->draw(manual_text);
-        config->window_p->display();
-        for (int i = 0; i < mess_number; i++) {
-            manual_text.setString(cur_manual_text[i]);
-            manual_text.setPosition(sf::Vector2f(unit * i, y));
-            config->window_p->draw(manual_text);
-        }
-    }
-
-    void display()
-    {
-        for (int i = 0; i < config->field.sizeY; i++) {
-            for (int k = 0; k < config->field.sizeX; k++) {
-                print_squard(config->field.field[i][k], i, k);
-            }
-        }
-        print_manual();
-        config->window_p->display();
-    }
-
-    void calculate_cell_size()
-    {
-        float X = (config->windowX - config->windowX * config->margin * 2.) / config->field.sizeX;
-        float Y = (config->windowY - config->windowY * config->margin * 2.) / config->field.sizeY;
-        config->size_cell = (X < Y) ? X : Y;
-        calc_offsets();
-    }
-    void calc_offsets()
-    {
-        config->offsetX = (config->windowX - config->field.sizeX * config->size_cell) / 2.;
-        config->offsetY = (config->windowY - config->field.sizeY * config->size_cell) / 2.;
-    }
-
-    void allocate_memory_for_field(Game::Field_t& map);
+    void user_choise();
     void input_keyboard(sf::Event&);
     void control_settings(sf::Event&);
-    void draw_property(sf::Color, int);
-    void relocate();
-    void install_font(sf::Text&, int, std::string);
-
     void process_mouse_click();
+
+    void draw_settings();
+    void draw_property(sf::Color, int);
+
+    void relocate();
+    void allocate_memory_for_field(Game::Field_t& map);
+    void install_font(sf::Text&, int, std::string);
 
 private:
     static const int manual_size = 2;
     std::vector<std::vector<std::string>> manual
-            = {{"Spase - input/game",
+            = {{"Spase - change to game mode",
                 "w, a, s, d - controlling",
                 "enter - select cell",
                 "LMB - change cell state",
                 "k - clear map",
                 "M - open settings"},
-               {"Spase - input/game",
+               {"Spase - change to input mode",
                 "o - change generation",
                 "r - auto/manual",
                 "k = clear map",
                 "M - open settings"}};
-    void user_choise();
     int get_int(std::string& input, int& i);
 
     int last_clickX = -1;
@@ -234,12 +160,6 @@ public:
     {
         return config->window_p;
     }
-    void setGameMode()
-    {
-        config->game_mode = true;
-        config->input_mode = false;
-        config->settings_mode = false;
-    }
 
     window_config*& get_config()
     {
@@ -247,15 +167,16 @@ public:
     }
 
     void game(sf::Event& event);
-    void setInputMode();
 
 private:
     Backend* backend_p;
     Frontend* frontend_p;
     void configurate_settings();
     void setSettingMode();
-    bool resized(sf::Event& event);
+    void setInputMode();
+    void setGameMode();
 
+    bool resized(sf::Event& event);
     window_config* config;
 };
 };
