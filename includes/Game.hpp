@@ -40,8 +40,12 @@ class window_config {
 public:
     int windowX;
     int windowY;
-    float size_cell;
+    int delay_between_changed_generations = 1000;
+    int64_t cur_time;
     double margin = 0.1;
+    float size_cell;
+    float offsetX;
+    float offsetY;
     sf::RenderWindow* window_p;
     sf::RenderWindow* window_settings;
     int* live_cell_sum;
@@ -51,11 +55,7 @@ public:
     bool game_mode;
     bool settings_mode;
     bool is_resized = false;
-    float offsetX;
-    float offsetY;
     bool auto_change = false;
-    int delay_between_changed_generations = 1000;
-    int64_t cur_time;
 };
 
 class Backend {
@@ -80,36 +80,40 @@ public:
     }
 
     void print_squard(bool is_live, int coordY, int coordX);
-    void draw_settings();
-    void resized(int width, int height);
     void print_manual();
     void display(std::vector<std::pair<int, int>> mas);
     void display();
+
+    void resized(int width, int height);
     void calculate_cell_size();
     void calc_offsets();
-    void allocate_memory_for_field(Game::Field_t& map);
+
+    void user_choise();
     void input_keyboard(sf::Event&);
     void control_settings(sf::Event&);
-    void draw_property(sf::Color, int);
-    void relocate();
-    void install_font(sf::Text&, int, std::string);
     void process_mouse_click();
+
+    void draw_settings();
+    void draw_property(sf::Color, int);
+
+    void relocate();
+    void allocate_memory_for_field(Game::Field_t& map);
+    void install_font(sf::Text&, int, std::string);
 
 private:
     static const int manual_size = 2;
     std::vector<std::vector<std::string>> manual
-            = {{"Spase - input/game",
+            = {{"Spase - change to game mode",
                 "w, a, s, d - controlling",
                 "enter - select cell",
                 "LMB - change cell state",
                 "k - clear map",
                 "M - open settings"},
-               {"Spase - input/game",
+               {"Spase - change to input mode",
                 "o - change generation",
                 "r - auto/manual",
                 "k = clear map",
                 "M - open settings"}};
-    void user_choise();
     int get_int(std::string& input, int& i);
 
     int last_clickX = -1;
@@ -156,12 +160,6 @@ public:
     {
         return config->window_p;
     }
-    void setGameMode()
-    {
-        config->game_mode = true;
-        config->input_mode = false;
-        config->settings_mode = false;
-    }
 
     window_config*& get_config()
     {
@@ -169,15 +167,16 @@ public:
     }
 
     void game(sf::Event& event);
-    void setInputMode();
 
 private:
     Backend* backend_p;
     Frontend* frontend_p;
     void configurate_settings();
     void setSettingMode();
-    bool resized(sf::Event& event);
+    void setInputMode();
+    void setGameMode();
 
+    bool resized(sf::Event& event);
     window_config* config;
 };
 };

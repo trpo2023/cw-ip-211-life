@@ -224,6 +224,13 @@ void Game::Frontend::input_keyboard(sf::Event& event)
     return;
 }
 
+void Game::Game_window::setGameMode()
+{
+    config->game_mode = true;
+    config->input_mode = false;
+    config->settings_mode = false;
+}
+
 void Game::Game_window::setSettingMode()
 {
     config->settings_mode = true;
