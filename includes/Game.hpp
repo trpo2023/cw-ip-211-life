@@ -58,9 +58,9 @@ public:
     int64_t cur_time;
 };
 
-class Logic {
+class Backend {
 public:
-    Logic(window_config*& config_gl)
+    Backend(window_config*& config_gl)
     {
         config = config_gl;
     }
@@ -70,11 +70,11 @@ public:
     window_config* config;
 };
 
-class Input {
+class Frontend {
 public:
     void clear();
 
-    Input(window_config*& config_gl)
+    Frontend(window_config*& config_gl)
     {
         config = config_gl;
     }
@@ -198,7 +198,6 @@ private:
 };
 class Game_window {
 public:
-
     Game_window(sf::RenderWindow& window, int x, int y)
     {
         config = new window_config();
@@ -215,21 +214,21 @@ public:
         config->game_mode = false;
         config->settings_mode = false;
 
-        static Input input{config};
-        static Logic logic{config};
+        static Frontend input{config};
+        static Backend logic{config};
 
-        input_p = &input;
-        logic_p = &logic;
+        frontend_p = &input;
+        backend_p = &logic;
 
-        input_p->calculate_cell_size();
+        frontend_p->calculate_cell_size();
         setInputMode();
-        input_p->allocate_memory_for_field(config->field);
-        input_p->display();
+        frontend_p->allocate_memory_for_field(config->field);
+        frontend_p->display();
     }
 
     void display()
     {
-        input_p->display();
+        frontend_p->display();
     }
     sf::RenderWindow* get_window()
     {
@@ -251,8 +250,8 @@ public:
     void setInputMode();
 
 private:
-    Logic* logic_p;
-    Input* input_p;
+    Backend* backend_p;
+    Frontend* frontend_p;
     void configurate_settings();
     void setSettingMode();
     bool resized(sf::Event& event);

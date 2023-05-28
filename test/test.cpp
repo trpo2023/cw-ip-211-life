@@ -3,7 +3,7 @@
 
 #include <Game.hpp>
 
-Game::Logic* test_game;
+Game::Backend* test_game;
 void create_field()
 {
     Game::window_config* config = new Game::window_config;
@@ -14,7 +14,7 @@ void create_field()
     for (int i = 0; i < 9; i++) {
         config->field.field[i] = new bool[9];
     }
-    test_game = new Game::Logic{config};
+    test_game = new Game::Backend{config};
     bool map[9][9]
             = {{0, 1, 0, 0, 0, 0, 0, 0, 0},
                {1, 0, 1, 0, 0, 0, 0, 0, 0},

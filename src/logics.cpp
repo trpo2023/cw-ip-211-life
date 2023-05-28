@@ -6,7 +6,7 @@
 #include <Game.hpp>
 
 template <typename T1, typename T2>
-int Game::Logic::counting_live_cells(Game::Field_t& field, T1 i, T2 k)
+int Game::Backend::counting_live_cells(Game::Field_t& field, T1 i, T2 k)
 {
     int count = 0;
     if (i > 0) {
@@ -36,7 +36,7 @@ int Game::Logic::counting_live_cells(Game::Field_t& field, T1 i, T2 k)
     return count;
 }
 
-std::vector<std::pair<int, int>> Game::Logic::change_state(Game::Field_t& field)
+std::vector<std::pair<int, int>> Game::Backend::change_state(Game::Field_t& field)
 {
     std::vector<std::pair<int, int>> changed_cage;
     for (int i = 0; i < field.sizeY; i++) {

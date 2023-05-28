@@ -5,7 +5,7 @@
 
 #include <Game.hpp>
 
-int Game::Input::get_int(std::string& input, int& i)
+int Game::Frontend::get_int(std::string& input, int& i)
 {
     std::string digit;
     for (; i < input.size() && input[i] != ','; i++) {
@@ -17,7 +17,7 @@ int Game::Input::get_int(std::string& input, int& i)
     return stod(digit);
 }
 
-void Game::Input::print_squard(bool is_live, int coordY, int coordX)
+void Game::Frontend::print_squard(bool is_live, int coordY, int coordX)
 {
     float offsetX = config->offsetX;
     float offsetY = config->offsetY;
@@ -31,7 +31,7 @@ void Game::Input::print_squard(bool is_live, int coordY, int coordX)
     config->window_p->draw(cell);
 }
 
-void Game::Input::allocate_memory_for_field(Game::Field_t& map)
+void Game::Frontend::allocate_memory_for_field(Game::Field_t& map)
 {
     map.field = new bool*[map.sizeY];
     config->live_cell_sum = new int[map.sizeY];
@@ -51,7 +51,7 @@ void Game::Game_window::setInputMode()
     config->settings_mode = false;
 }
 
-void Game::Input::process_mouse_click()
+void Game::Frontend::process_mouse_click()
 {
     sf::Vector2i mouse_pos = sf::Mouse::getPosition(*config->window_p);
     int cellX = (mouse_pos.x - config->offsetX) / config->size_cell;
@@ -75,7 +75,7 @@ void Game::Input::process_mouse_click()
     config->window_p->display();
 }
 
-void Game::Input::user_choise()
+void Game::Frontend::user_choise()
 {
     sf::RectangleShape cell(sf::Vector2f(config->size_cell, config->size_cell));
     cell.setPosition(sf::Vector2f(
@@ -88,7 +88,7 @@ void Game::Input::user_choise()
     config->window_p->display();
 }
 
-void Game::Input::clear()
+void Game::Frontend::clear()
 {
     for (int i = 0; i < config->field.sizeY; i++) {
         config->live_cell_sum[i] = 0;
@@ -99,7 +99,7 @@ void Game::Input::clear()
     display();
 }
 
-void Game::Input::input_keyboard(sf::Event& event)
+void Game::Frontend::input_keyboard(sf::Event& event)
 {
     std::pair<int, int> change_cage;
     switch (event.key.code) {
@@ -164,12 +164,12 @@ void Game::Game_window::configurate_settings()
     config->window_settings->setPosition(sf::Vector2i(0, 0));
     config->window_settings->setKeyRepeatEnabled(false);
 
-    input_p->draw_settings();
+    frontend_p->draw_settings();
 
     setSettingMode();
 }
 
-void Game::Input::draw_property(sf::Color color, int index)
+void Game::Frontend::draw_property(sf::Color color, int index)
 {
     float offsetX = config->settings.offsetX;
     float offsetY = config->settings.offsetY;
@@ -194,7 +194,7 @@ void Game::Input::draw_property(sf::Color color, int index)
     config->window_settings->display();
 }
 
-void Game::Input::install_font(sf::Text& text, int char_size, std::string font_path)
+void Game::Frontend::install_font(sf::Text& text, int char_size, std::string font_path)
 {
     static sf::Font font;
     font.loadFromFile(font_path);
@@ -202,7 +202,7 @@ void Game::Input::install_font(sf::Text& text, int char_size, std::string font_p
     text.setCharacterSize(char_size);
 }
 
-void Game::Input::draw_settings()
+void Game::Frontend::draw_settings()
 {
     sf::Text property_text;
     sf::Text property_value;
@@ -232,7 +232,7 @@ void Game::Input::draw_settings()
     }
 }
 
-void Game::Input::relocate()
+void Game::Frontend::relocate()
 {
     config->input_mode = true;
     config->settings_mode = false;
@@ -244,7 +244,7 @@ void Game::Input::relocate()
     display();
 }
 
-void Game::Input::control_settings(sf::Event& event)
+void Game::Frontend::control_settings(sf::Event& event)
 {
     std::string new_value;
     if (event.type == sf::Event::KeyPressed) {
@@ -357,7 +357,7 @@ void Game::Game_window::game(sf::Event& event)
             return;
             break;
         case sf::Keyboard::K:
-            input_p->clear();
+            frontend_p->clear();
             break;
         case sf::Keyboard::R:
             config->cur_time = std::chrono::duration_cast<std::chrono::milliseconds>(
@@ -381,23 +381,23 @@ void Game::Game_window::game(sf::Event& event)
 
         if (config->auto_change) {
             if (config->cur_time + config->delay_between_changed_generations < ms) {
-                input_p->display(logic_p->change_state(config->field));
+                frontend_p->display(backend_p->change_state(config->field));
                 config->cur_time = ms;
             }
         } else if (event.type == sf::Event::KeyPressed) {
             if (event.key.code == sf::Keyboard::O) {
-                input_p->display(logic_p->change_state(config->field));
+                frontend_p->display(backend_p->change_state(config->field));
             }
         }
     } else if (!config->game_mode and config->input_mode and !config->settings_mode) {
         if (event.type == sf::Event::KeyPressed) {
-            input_p->input_keyboard(event);
-            // if (input_p->input_keyboard(event)) {
+            frontend_p->input_keyboard(event);
+            // if (frontend_p->input_keyboard(event)) {
             //     setGameMode();
             // };
         }
         if (!config->is_resized and sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-            input_p->process_mouse_click();
+            frontend_p->process_mouse_click();
         }
     } else if (config->settings_mode and !config->game_mode and !config->input_mode) {
         if (config->window_settings->isOpen()) {
@@ -411,11 +411,11 @@ void Game::Game_window::game(sf::Event& event)
                     sf::FloatRect visiableArea(
                             0, 0, config->settings.windowX, config->settings.windowY);
                     config->window_settings->setView(sf::View(visiableArea));
-                    input_p->draw_settings();
+                    frontend_p->draw_settings();
                 }
                 if (settings_event.type == sf::Event::Closed)
                     config->window_settings->close();
-                input_p->control_settings(settings_event);
+                frontend_p->control_settings(settings_event);
             }
         }
     }
@@ -433,7 +433,7 @@ bool Game::Game_window::resized(sf::Event& event)
         return true;
     } else if (config->is_resized) {
         config->is_resized = false;
-        input_p->resized(width, height);
+        frontend_p->resized(width, height);
         display();
         return true;
     }
