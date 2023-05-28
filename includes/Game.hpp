@@ -79,98 +79,20 @@ public:
         config = config_gl;
     }
 
-    void display(std::vector<std::pair<int, int>> mas)
-    {
-        for (int i = 0; i < mas.size(); i++) {
-            print_squard(
-                    config->field.field[mas[i].first][mas[i].second], mas[i].first, mas[i].second);
-        }
-        config->window_p->display();
-    }
     void print_squard(bool is_live, int coordY, int coordX);
     void draw_settings();
-
-    void resized(int width, int height)
-    {
-        sf::FloatRect visiableArea(0, 0, width, height);
-        config->window_p->setView(sf::View(visiableArea));
-        config->windowX = width;
-        config->windowY = height;
-        calculate_cell_size();
-        calc_offsets();
-    }
-
-    void print_manual()
-    {
-        int width = config->windowX;
-        int startX = 0;
-        float font_coof = 2;
-        int y = config->windowY - config->offsetY / 2;
-        std::vector<std::string> cur_manual_text;
-
-        if (config->input_mode and !config->game_mode) {
-            cur_manual_text = manual[0];
-        } else {
-            cur_manual_text = manual[1];
-        }
-
-        int mess_number = cur_manual_text.size();
-        int unit = width / mess_number;
-        int max_message_size = 0;
-
-        for (int i = 0; i < mess_number; i++) {
-            if (cur_manual_text[i].size() > max_message_size)
-                max_message_size = cur_manual_text[i].size();
-        }
-        float font_size = (unit / static_cast<float>(max_message_size)) * font_coof;
-        if (font_size > 20) {
-            font_size = 20;
-        }
-        sf::Text manual_text;
-        sf::Font font;
-        font.loadFromFile("../font/Ubuntu-Regular.ttf");
-        manual_text.setFont(font);
-        manual_text.setCharacterSize(font_size);
-        config->window_p->draw(manual_text);
-        config->window_p->display();
-        for (int i = 0; i < mess_number; i++) {
-            manual_text.setString(cur_manual_text[i]);
-            manual_text.setPosition(sf::Vector2f(unit * i, y));
-            config->window_p->draw(manual_text);
-        }
-    }
-
-    void display()
-    {
-        for (int i = 0; i < config->field.sizeY; i++) {
-            for (int k = 0; k < config->field.sizeX; k++) {
-                print_squard(config->field.field[i][k], i, k);
-            }
-        }
-        print_manual();
-        config->window_p->display();
-    }
-
-    void calculate_cell_size()
-    {
-        float X = (config->windowX - config->windowX * config->margin * 2.) / config->field.sizeX;
-        float Y = (config->windowY - config->windowY * config->margin * 2.) / config->field.sizeY;
-        config->size_cell = (X < Y) ? X : Y;
-        calc_offsets();
-    }
-    void calc_offsets()
-    {
-        config->offsetX = (config->windowX - config->field.sizeX * config->size_cell) / 2.;
-        config->offsetY = (config->windowY - config->field.sizeY * config->size_cell) / 2.;
-    }
-
+    void resized(int width, int height);
+    void print_manual();
+    void display(std::vector<std::pair<int, int>> mas);
+    void display();
+    void calculate_cell_size();
+    void calc_offsets();
     void allocate_memory_for_field(Game::Field_t& map);
     void input_keyboard(sf::Event&);
     void control_settings(sf::Event&);
     void draw_property(sf::Color, int);
     void relocate();
     void install_font(sf::Text&, int, std::string);
-
     void process_mouse_click();
 
 private:
