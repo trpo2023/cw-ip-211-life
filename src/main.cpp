@@ -9,18 +9,15 @@ int main()
     const int windowY = 1000;
     sf::RenderWindow window(sf::VideoMode(windowX, windowY), "SFML works!");
     Game::Game_window game_window{window, windowX, windowY};
-
     window.setKeyRepeatEnabled(false);
 
     while (window.isOpen()) {
         sf::Event event;
-        while (window.pollEvent(event) or game_window.get_config()->auto_change) {
+        if (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed)
                 window.close();
-            game_window.game(event);
         };
-
-        window.display();
+        game_window.game(event);
     }
     return 0;
 }

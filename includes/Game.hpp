@@ -14,6 +14,28 @@ struct Field_t {
     int sizeY;
     bool** field;
 };
+
+struct Settings {
+    int windowX;
+    int windowY;
+    int x;
+    int y;
+    int cur_choise = 0;
+    int delay_between_changed_generations = 1000;
+
+    float offsetX;
+    float offsetY;
+    float margin = 0.1;
+
+    int* order[3] = {&x, &y, &delay_between_changed_generations};
+    std::vector<std::string> property
+            = {"size map X",
+               "size map Y",
+               "delay",
+               "enter - to chose property and then enter to accept property\ndown, Up - to "
+               "control\nM - to accept changes"};
+    bool is_changed = false;
+};
 class window_config {
 public:
     int windowX;
@@ -21,10 +43,13 @@ public:
     float size_cell;
     double margin = 0.1;
     sf::RenderWindow* window_p;
+    sf::RenderWindow* window_settings;
     int* live_cell_sum;
     Field_t field;
+    Settings settings;
     bool input_mode;
     bool game_mode;
+    bool settings_mode;
     bool is_resized = false;
     float offsetX;
     float offsetY;
@@ -63,6 +88,7 @@ public:
         config->window_p->display();
     }
     void print_squard(bool is_live, int coordY, int coordX);
+    void draw_settings();
 
     void resized(int width, int height)
     {
@@ -76,26 +102,6 @@ public:
 
     void print_manual()
     {
-        // int width = config->field.sizeX * config->size_cell;
-        // int indent = 20;
-
-        // if (config->input_mode and !config->game_mode) {
-        //     int mess_number = manual[0].size();
-        //     int min_message_size = std::numeric_limits<int>::max();
-        //     for (auto& x : manual[0]) {
-        //         if (x.size() < min_message_size)
-        //             min_message_size = x.size();
-        //     }
-        //     int measurement_unit = width / min_message_size + indent;
-        // 		int common_number_of_unit = width / measurement_unit;
-        // 		std::vector<int> distribution_of_units(mess_number);
-        // 		for (auto&x : distribution_of_units)
-        // 			x = common_number_of_unit / mess_number;
-        // 		for(int i = 0; i < mess_number; i++) {
-        // 			if ()
-        // 		}
-        // }
-
         int width = config->windowX;
         int startX = 0;
         float font_coof = 2;
@@ -111,6 +117,7 @@ public:
         int mess_number = cur_manual_text.size();
         int unit = width / mess_number;
         int max_message_size = 0;
+
         for (int i = 0; i < mess_number; i++) {
             if (cur_manual_text[i].size() > max_message_size)
                 max_message_size = cur_manual_text[i].size();
@@ -158,25 +165,28 @@ public:
     }
 
     void allocate_memory_for_field(Game::Field_t& map);
-    int input_keyboard(sf::Event&);
+    void input_keyboard(sf::Event&);
+    void control_settings(sf::Event&);
+    void draw_property(sf::Color, int);
+    void relocate();
+    void install_font(sf::Text&, int, std::string);
+
     void process_mouse_click();
 
 private:
     static const int manual_size = 2;
     std::vector<std::vector<std::string>> manual
-            = {{
-                       "Spase - input/game",
-                       "w, a, s, d - controlling",
-                       "enter - select cell",
-                       "LMB - change cell state",
-                       "k = clear map",
-               },
-               {
-                       "Spase - input/game",
-                       "o - change generation",
-                       "r - auto/manual",
-                       "k = clear map",
-               }};
+            = {{"Spase - input/game",
+                "w, a, s, d - controlling",
+                "enter - select cell",
+                "LMB - change cell state",
+                "k - clear map",
+                "M - open settings"},
+               {"Spase - input/game",
+                "o - change generation",
+                "r - auto/manual",
+                "k = clear map",
+                "M - open settings"}};
     void user_choise();
     int get_int(std::string& input, int& i);
 
@@ -188,19 +198,22 @@ private:
 };
 class Game_window {
 public:
-    Logic* logic_p;
-    Input* input_p;
+
     Game_window(sf::RenderWindow& window, int x, int y)
     {
         config = new window_config();
         config->windowX = x;
         config->windowY = y;
+
         config->window_p = &window;
+        config->window_p->setPosition(sf::Vector2i(0, 0));
+
         config->live_cell_sum = new int[y];
         config->field.sizeX = 50;
         config->field.sizeY = 50;
         config->input_mode = true;
         config->game_mode = false;
+        config->settings_mode = false;
 
         static Input input{config};
         static Logic logic{config};
@@ -226,6 +239,7 @@ public:
     {
         config->game_mode = true;
         config->input_mode = false;
+        config->settings_mode = false;
     }
 
     window_config*& get_config()
@@ -237,7 +251,11 @@ public:
     void setInputMode();
 
 private:
-    void resized(sf::Event& event);
+    Logic* logic_p;
+    Input* input_p;
+    void configurate_settings();
+    void setSettingMode();
+    bool resized(sf::Event& event);
 
     window_config* config;
 };
