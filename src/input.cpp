@@ -179,8 +179,8 @@ void Game::Input::draw_property(sf::Color color, int index)
     static sf::Text property_value;
     static sf::Font font;
 
-    install_font(property_text, 20, "../font/Ubuntu-Regular.ttf");
-    install_font(property_value, 20, "../font/Ubuntu-Regular.ttf");
+    install_font(property_text, 20, "../font/second_font.ttf");
+    install_font(property_value, 20, "../font/second_font.ttf");
     choise.setPosition(sf::Vector2f(offsetX, offsetY + margin * index));
     choise.setFillColor(color);
     config->window_settings->draw(choise);
@@ -207,6 +207,12 @@ void Game::Input::draw_settings()
 {
     sf::Text property_text;
     sf::Text property_value;
+    install_font(property_text, 20, "../font/second_font.ttf");
+    install_font(property_value, 20, "../font/second_font.ttf");
+    float offsetX = config->settings.offsetX;
+    float offsetY = config->settings.offsetY;
+
+    int margin = 100;
 
     for (int i = 0; i < config->settings.property.size() - 1; i++) {
         if (config->settings.cur_choise == i) {
