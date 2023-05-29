@@ -320,6 +320,8 @@ void Game::Frontend::relocate()
 {
     config->input_mode = true;
     config->settings_mode = false;
+    config->game_mode = false;
+    config->auto_change = false;
     calculate_cell_size();
     calc_offsets();
     if (config->settings.is_changed)
