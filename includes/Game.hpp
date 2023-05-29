@@ -1,8 +1,4 @@
 #include <SFML/Graphics.hpp>
-#include <chrono>
-#include <iostream>
-#include <limits>
-#include <string>
 #ifndef MAP_HPP
 #define MAP_HPP
 

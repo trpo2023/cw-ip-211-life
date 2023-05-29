@@ -184,7 +184,6 @@ void Game::Frontend::input_keyboard(sf::Event& event)
     std::pair<int, int> change_cage;
     switch (event.key.code) {
     case sf::Keyboard::W:
-        std::cout << event.key.code << std::endl;
         print_squard(config->field.field[posY][posX], posY, posX);
         posY = (config->field.sizeY + ((posY - 1) % config->field.sizeY)) % config->field.sizeY;
         user_choise();
