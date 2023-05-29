@@ -184,14 +184,13 @@ void Game::Frontend::input_keyboard(sf::Event& event)
     std::pair<int, int> change_cage;
     switch (event.key.code) {
     case sf::Keyboard::W:
-    case sf::Keyboard::Up:
+        std::cout << event.key.code << std::endl;
         print_squard(config->field.field[posY][posX], posY, posX);
         posY = (config->field.sizeY + ((posY - 1) % config->field.sizeY)) % config->field.sizeY;
         user_choise();
 
         break;
     case sf::Keyboard::A:
-    case sf::Keyboard::Left:
 
         print_squard(config->field.field[posY][posX], posY, posX);
 
@@ -199,13 +198,11 @@ void Game::Frontend::input_keyboard(sf::Event& event)
         user_choise();
         break;
     case sf::Keyboard::S:
-    case sf::Keyboard::Down:
         print_squard(config->field.field[posY][posX], posY, posX);
         posY = (config->field.sizeY + ((posY + 1) % config->field.sizeY)) % config->field.sizeY;
         user_choise();
         break;
     case sf::Keyboard::D:
-    case sf::Keyboard::Right:
         print_squard(config->field.field[posY][posX], posY, posX);
         posX = (config->field.sizeX + ((posX + 1) % config->field.sizeX)) % config->field.sizeX;
         user_choise();
@@ -447,10 +444,12 @@ void Game::Game_window::game(sf::Event& event)
             frontend_p->clear();
             break;
         case sf::Keyboard::R:
-            config->cur_time = std::chrono::duration_cast<std::chrono::milliseconds>(
-                                       std::chrono::system_clock::now().time_since_epoch())
-                                       .count();
-            config->auto_change = !config->auto_change;
+            if (config->game_mode) {
+                config->cur_time = std::chrono::duration_cast<std::chrono::milliseconds>(
+                                           std::chrono::system_clock::now().time_since_epoch())
+                                           .count();
+                config->auto_change = !config->auto_change;
+            }
             break;
         case sf::Keyboard::M:
             configurate_settings();
