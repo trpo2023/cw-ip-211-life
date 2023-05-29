@@ -320,6 +320,8 @@ void Game::Frontend::relocate()
 {
     config->input_mode = true;
     config->settings_mode = false;
+    config->game_mode = false;
+    config->auto_change = false;
     calculate_cell_size();
     calc_offsets();
     if (config->settings.is_changed)
@@ -396,6 +398,11 @@ void Game::Frontend::control_settings(sf::Event& event)
                     }
                 }
             }
+            if (new_value.size() == 0) {
+                // draw_settings();
+                draw_property(sf::Color::Blue, config->settings.cur_choise);
+                return;
+            }
             switch (config->settings.cur_choise) {
             case 0:
                 config->field.sizeX = std::stoi((new_value.c_str()));
@@ -410,7 +417,7 @@ void Game::Frontend::control_settings(sf::Event& event)
                 break;
             }
             *config->settings.order[config->settings.cur_choise] = std::stoi((new_value.c_str()));
-            draw_settings();
+            draw_property(sf::Color::Blue, config->settings.cur_choise);
 
             break;
 
