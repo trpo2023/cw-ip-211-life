@@ -398,6 +398,11 @@ void Game::Frontend::control_settings(sf::Event& event)
                     }
                 }
             }
+            if (new_value.size() == 0) {
+                // draw_settings();
+                draw_property(sf::Color::Blue, config->settings.cur_choise);
+                return;
+            }
             switch (config->settings.cur_choise) {
             case 0:
                 config->field.sizeX = std::stoi((new_value.c_str()));
@@ -412,7 +417,7 @@ void Game::Frontend::control_settings(sf::Event& event)
                 break;
             }
             *config->settings.order[config->settings.cur_choise] = std::stoi((new_value.c_str()));
-            draw_settings();
+            draw_property(sf::Color::Blue, config->settings.cur_choise);
 
             break;
 
