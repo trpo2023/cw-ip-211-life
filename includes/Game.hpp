@@ -8,6 +8,8 @@ class Game_window;
 struct Field_t {
     int sizeX;
     int sizeY;
+    int new_sizeX;
+    int new_sizeY;
     bool** field;
 };
 
@@ -92,8 +94,9 @@ public:
     void draw_settings();
     void draw_property(sf::Color, int);
 
+    void clear_field();
     void relocate();
-    void allocate_memory_for_field(Game::Field_t& map);
+    void allocate_memory_for_field(Game::Field_t& map, int, int);
     void install_font(sf::Text&, int, std::string);
 
 private:
@@ -132,6 +135,8 @@ public:
         config->live_cell_sum = new int[y];
         config->field.sizeX = 50;
         config->field.sizeY = 50;
+        config->field.new_sizeX = 50;
+        config->field.new_sizeY = 50;
         config->input_mode = true;
         config->game_mode = false;
         config->settings_mode = false;
@@ -144,7 +149,8 @@ public:
 
         frontend_p->calculate_cell_size();
         setInputMode();
-        frontend_p->allocate_memory_for_field(config->field);
+        frontend_p->allocate_memory_for_field(
+                config->field, config->field.sizeY, config->field.sizeX);
         frontend_p->display();
     }
 

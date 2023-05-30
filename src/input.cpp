@@ -31,17 +31,19 @@ void Game::Frontend::print_squard(bool is_live, int coordY, int coordX)
     config->window_p->draw(cell);
 }
 
-void Game::Frontend::allocate_memory_for_field(Game::Field_t& map)
+void Game::Frontend::allocate_memory_for_field(Game::Field_t& map, int y, int x)
 {
-    map.field = new bool*[map.sizeY];
-    config->live_cell_sum = new int[map.sizeY];
-    for (int i = 0; i < map.sizeY; i++) {
-        map.field[i] = new bool[map.sizeX];
+    map.field = new bool*[y];
+    config->live_cell_sum = new int[y];
+    for (int i = 0; i < y; i++) {
+        map.field[i] = new bool[x];
         config->live_cell_sum[i] = 0;
-        for (int k = 0; k < map.sizeX; k++) {
+        for (int k = 0; k < x; k++) {
             map.field[i][k] = 0;
         }
     }
+    config->field.sizeX = config->field.new_sizeX;
+    config->field.sizeY = config->field.new_sizeY;
 }
 
 void Game::Game_window::setInputMode()
@@ -315,16 +317,26 @@ void Game::Frontend::draw_settings()
     }
 }
 
+void Game::Frontend::clear_field()
+{
+    for (int i = 0; i < config->field.sizeY; i++) {
+        delete config->field.field[i];
+    }
+    delete config->field.field;
+}
 void Game::Frontend::relocate()
 {
     config->input_mode = true;
     config->settings_mode = false;
     config->game_mode = false;
     config->auto_change = false;
-    calculate_cell_size();
-    calc_offsets();
-    if (config->settings.is_changed)
-        allocate_memory_for_field(config->field);
+
+    if (config->settings.is_changed) {
+        clear_field();
+        allocate_memory_for_field(config->field, config->field.new_sizeY, config->field.new_sizeX);
+        calculate_cell_size();
+        calc_offsets();
+    }
     config->window_p->clear();
     display();
 }
@@ -404,10 +416,10 @@ void Game::Frontend::control_settings(sf::Event& event)
             }
             switch (config->settings.cur_choise) {
             case 0:
-                config->field.sizeX = std::stoi((new_value.c_str()));
+                config->field.new_sizeX = std::stoi((new_value.c_str()));
                 break;
             case 1:
-                config->field.sizeY = std::stoi((new_value.c_str()));
+                config->field.new_sizeY = std::stoi((new_value.c_str()));
                 break;
             case 2:
                 config->delay_between_changed_generations = std::stoi((new_value.c_str()));
